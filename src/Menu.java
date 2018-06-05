@@ -14,7 +14,7 @@ class Menu extends JFrame implements ActionListener {    // 실행 누르면 실행
 	JButton btnEdit = new JButton("수정");
 	JPanel panel1 = new JPanel();
 	JPanel panel2 = new JPanel();
-	JScrollPane jsp = new JScrollPane();
+	JScrollPane scrollPane = new JScrollPane();
 	Container c;
 	int inputStock;
 	int inputPrice;
