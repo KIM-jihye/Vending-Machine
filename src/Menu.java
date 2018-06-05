@@ -12,7 +12,8 @@ class Menu extends JFrame implements ActionListener {    // ¸Þ´º °ü¸® ¹öÆ° ´©¸£¸
 	JButton btnAdd = new JButton("Ãß°¡");
 	JButton btnDel = new JButton("»èÁ¦");
 	JButton btnEdit = new JButton("¼öÁ¤");
-	JPanel panel = new JPanel();
+	JPanel panel1 = new JPanel();
+	JPanel panel2 = new JPanel();
 	JScrollPane jsp = new JScrollPane();
 	Container c;
 	int inputStock;
@@ -21,38 +22,43 @@ class Menu extends JFrame implements ActionListener {    // ¸Þ´º °ü¸® ¹öÆ° ´©¸£¸
 	DefaultTableModel menuModel;
 	JTable menuTable;
 	
-	public Menu() {    // ¸Þ´º °ü¸® ¹öÆ° ´©¸£¸é ½ÇÇà
+	public Menu() {    // ½ÇÇà ´©¸£¸é ½ÇÇà
 		setTitle("¸Þ´º °ü¸®");
 		createMenuWindow();
 		setSize(600,600);
 		setVisible(true);
 	}
 	
-	public void createMenuWindow() {    // ¸Þ´º °ü¸® ¹öÆ° ´©¸£¸é ½ÇÇà
+	public void createMenuWindow() {    // ½ÇÇà ´©¸£¸é ½ÇÇà
 		c = this.getContentPane();
-
-		setLayout(new BorderLayout());
 	
-		panel.add(new JLabel("»óÇ°¸í:"));
-		panel.add(nameField);
-		panel.add(new JLabel("°¡°Ý:"));
-		panel.add(priceField);
-		panel.add(new JLabel("Àç°í:"));
-		panel.add(stockField);
-		panel.add(btnAdd);
-		panel.add(btnDel);
-		panel.add(btnEdit);
-		
+		panel1.add(new JLabel("»óÇ°¸í:"));
+		panel1.add(nameField);
+		panel1.add(new JLabel("°¡°Ý:"));
+		panel1.add(priceField);
+		panel1.add(new JLabel("Àç°í:"));
+		panel1.add(stockField);
+		panel1.add(btnAdd);
+		panel1.add(btnDel);
+		panel1.add(btnEdit);
+	}
+	
+	public void createMenu() { // ¸Þ´º °ü¸® ´©¸£¸é ½ÇÇà
+		setLayout(new BorderLayout());
 		String title[] = {"»óÇ°¸í","°¡°Ý","°³¼ö"};
 		menuModel = new DefaultTableModel(title,0);
 		menuTable = new JTable(menuModel);
 		menuTable.addMouseListener(new TableEvent());
-		add(panel,BorderLayout.NORTH);
-		add(new JScrollPane(menuTable),BorderLayout.CENTER);
-
+		add(panel1,BorderLayout.NORTH);
+		panel2.add(new JScrollPane(menuTable));
+		add(panel2,BorderLayout.CENTER);
+	      
 		btnAdd.addActionListener(this);
 		btnDel.addActionListener(this);
 		btnEdit.addActionListener(this);
+	      
+		setSize(600,600);
+		setVisible(true);
 	}
 	
 	class TableEvent extends MouseAdapter {
@@ -93,6 +99,7 @@ class Menu extends JFrame implements ActionListener {    // ¸Þ´º °ü¸® ¹öÆ° ´©¸£¸
             JOptionPane.showMessageDialog(this,"»èÁ¦ÇÒ ¿­ ¼±ÅÃ");
             return;
          }
+		
          menuModel.removeRow(SelectRow);
          SelectRow = -1;
 	}
@@ -102,6 +109,7 @@ class Menu extends JFrame implements ActionListener {    // ¸Þ´º °ü¸® ¹öÆ° ´©¸£¸
 			JOptionPane.showMessageDialog(this,"¼öÁ¤ÇÒ ¿­ ¼±ÅÃ");
 			return;
 		}
+		
 		inputPrice = Integer.parseInt(priceField.getText());
 		inputStock = Integer.parseInt(stockField.getText());
         

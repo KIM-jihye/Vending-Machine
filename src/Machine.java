@@ -59,13 +59,14 @@ class Login extends JFrame implements ActionListener {
 }
 
 class Machine extends JFrame {    // 실행시키면 실행
-	
 	public Machine() {
 		setTitle("Vending Machine");
 		createMachineWindow();
 		setSize(500,500);
 		setVisible(true);
 	}
+	
+	Menu menu = new Menu();
 	
 	public void createMachineWindow() {    // 자판기 창 생성
 		JMenuBar menuBar = new JMenuBar();
@@ -88,7 +89,7 @@ class Machine extends JFrame {    // 실행시키면 실행
 			
 			switch(cmd) {
 			case "메뉴 관리":
-				Menu menu = new Menu();
+				menu.createMenu();
 				break;
 			case "매출 관리":
 				break;
