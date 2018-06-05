@@ -3,6 +3,9 @@ import java.awt.event.*;
 import java.awt.*;
 import javax.swing.table.*;
 import java.util.*;
+import java.awt.BorderLayout;
+import javax.swing.JLabel;
+import javax.swing.JTable;
 
 public class Money extends JFrame implements ActionListener {
    
