@@ -6,53 +6,24 @@ import java.io.*;
 import java.util.*;
 
 class Menu extends JFrame implements ActionListener {    // 메뉴 관리 버튼 누르면 실행
-	JTextField nameField = new JTextField(5);
-	JTextField priceField = new JTextField(5);
-	JTextField stockField = new JTextField(5);
-	JButton btnAdd = new JButton("추가");
-	JButton btnDel = new JButton("삭제");
-	JButton btnEdit = new JButton("수정");
-	JPanel panel = new JPanel();
-	JScrollPane jsp = new JScrollPane();
 	Container c;
-	int inputStock;
-	int inputPrice;
-	int SelectRow=-1;
-	DefaultTableModel menuModel;
+	JTextField nameField,priceField,stockField;
+	JButton btnAdd,btnDel,btnEdit;
+	DefaultTableModel model;
 	JTable menuTable;
+	JScrollPane scrollPane;
+	int SelectRow=-1;
 	
-	public Menu() {    // 메뉴 관리 버튼 누르면 실행
-		setTitle("메뉴 관리");
-		createMenuWindow();
-		setSize(600,600);
+	public Menu(String title) {    // 메뉴 관리 버튼 누르면 실행
+		super(title);
+		c = this.getContentPane();
+		this.setBounds(100,100,400,400);
+		this.createMenuWindow();
 		setVisible(true);
 	}
 	
 	public void createMenuWindow() {    // 메뉴 관리 버튼 누르면 실행
-		c = this.getContentPane();
-
-		setLayout(new BorderLayout());
-	
-		panel.add(new JLabel("상품명:"));
-		panel.add(nameField);
-		panel.add(new JLabel("가격:"));
-		panel.add(priceField);
-		panel.add(new JLabel("재고:"));
-		panel.add(stockField);
-		panel.add(btnAdd);
-		panel.add(btnDel);
-		panel.add(btnEdit);
-		
-		String title[] = {"상품명","가격","개수"};
-		menuModel = new DefaultTableModel(title,0);
-		menuTable = new JTable(menuModel);
-		menuTable.addMouseListener(new TableEvent());
-		add(panel,BorderLayout.NORTH);
-		add(new JScrollPane(menuTable),BorderLayout.CENTER);
-
-		btnAdd.addActionListener(this);
-		btnDel.addActionListener(this);
-		btnEdit.addActionListener(this);
+		JPanel pTop = new JPanel();
 	}
 	
 	class TableEvent extends MouseAdapter {
