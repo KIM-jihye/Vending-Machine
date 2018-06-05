@@ -5,7 +5,7 @@ import java.awt.event.*;
 import java.io.*;
 import java.util.*;
 
-class Menu extends JFrame implements ActionListener {    // 메뉴 관리 버튼 누르면 실행
+class Menu extends JFrame implements ActionListener {    // 실행 누르면 실행
 	JTextField nameField = new JTextField(5);
 	JTextField priceField = new JTextField(5);
 	JTextField stockField = new JTextField(5);
