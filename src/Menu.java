@@ -5,138 +5,168 @@ import java.awt.event.*;
 import java.io.*;
 import java.util.*;
 
-class Menu extends JFrame implements ActionListener {    // 실행 누르면 실행
-	JTextField nameField = new JTextField(5);
-	JTextField priceField = new JTextField(5);
-	JTextField stockField = new JTextField(5);
-	JButton btnAdd = new JButton("추가");
-	JButton btnDel = new JButton("삭제");
-	JButton btnEdit = new JButton("수정");
-	JPanel panel1 = new JPanel();
-	JPanel panel2 = new JPanel();
-	JScrollPane scrollPane = new JScrollPane();
-	Container c;
-	int inputStock;
-	int inputPrice;
-	int SelectRow=-1;
-	DefaultTableModel menuModel;
-	JTable menuTable;
+public class Menu extends JFrame implements ActionListener {
+	//private static final int SelectColumn=0;
+	Container cp;
+	JTextField nameField,priceField,stockField;
+	JButton btnAdd,btnDel,btnMod,btnSave;
+	DefaultTableModel model;
+	JTable table;
+	JScrollPane jsp;
+	int SelectRow = -1;
 	
-	public Menu() {    // 실행 누르면 실행
-		setTitle("메뉴 관리");
-		createMenuWindow();
-		setSize(600,600);
-		setVisible(true);
+	Menu(String title) {
+		super(title);
+		cp = this.getContentPane();
+		this.setBounds(100,100,400,400);
+		this.setDesign();
+		this.setVisible(true);
 	}
 	
-	public void createMenuWindow() {    // 실행 누르면 실행
-		c = this.getContentPane();
-	
-		panel1.add(new JLabel("상품명:"));
-		panel1.add(nameField);
-		panel1.add(new JLabel("가격:"));
-		panel1.add(priceField);
-		panel1.add(new JLabel("재고:"));
-		panel1.add(stockField);
-		panel1.add(btnAdd);
-		panel1.add(btnDel);
-		panel1.add(btnEdit);
-	}
-	
-	public void createMenu() { // 메뉴 관리 누르면 실행
-		setLayout(new BorderLayout());
-		String title[] = {"상품명","가격","개수"};
-		menuModel = new DefaultTableModel(title,0);
-		menuTable = new JTable(menuModel);
-		menuTable.addMouseListener(new TableEvent());
-		add(panel1,BorderLayout.NORTH);
-		panel2.add(new JScrollPane(menuTable));
-		add(panel2,BorderLayout.CENTER);
-	      
+	public void setDesign() {
+		JPanel pTop = new JPanel();
+		cp.add("North",pTop);
+		JPanel pBottom = new JPanel();
+		cp.add("South",pBottom);
+		// 상단
+		nameField = new JTextField(7);
+		priceField = new JTextField(7);
+		stockField = new JTextField(7);
+		pTop.add(new JLabel("상품명:"));
+		pTop.add(nameField);
+		pTop.add(new JLabel("가격:"));
+		pTop.add(priceField);
+		pTop.add(new JLabel("재고:"));
+		pTop.add(stockField);
+		// 중간
+		String[] title = {"상품명","가격","재고"};
+		model = new DefaultTableModel(title, 0);
+		table = new JTable(model);
+		table.addMouseListener(new TableEvent());
+		jsp = new JScrollPane(table);
+		cp.add("Center",jsp);
+		// 하단
+		btnAdd = new JButton("추가");
+		btnDel = new JButton("삭제");
+		btnMod = new JButton("수정");
+		btnSave = new JButton("저장");
+		pBottom.add(btnAdd);
+		pBottom.add(btnDel);
+		pBottom.add(btnMod);
+		pBottom.add(btnSave);
 		btnAdd.addActionListener(this);
 		btnDel.addActionListener(this);
-		btnEdit.addActionListener(this);
-	      
-		setSize(600,600);
-		setVisible(true);
+		btnMod.addActionListener(this);
+		btnSave.addActionListener(this);
+		
+		this.openMenu();
+	}
+	
+	public void openMenu() {
+		FileReader fr = null;
+		BufferedReader br = null;
+		try {
+			fr = new FileReader("./menu.dat");
+			br = new BufferedReader(fr);
+			int row = Integer.parseInt(br.readLine());
+			int col = Integer.parseInt(br.readLine());
+			String[] str = new String[col];
+			model.setRowCount(0);
+			for(int i=0; i<row; i++) {
+				for(int j=0; j<col; j++) {
+					String data = br.readLine();
+					str[j] = data;
+				}
+				model.addRow(str);
+			}
+			br.close();
+		} catch(FileNotFoundException e1) {
+			e1.printStackTrace();
+		} catch(NumberFormatException e1) {
+			e1.printStackTrace();
+		} catch(IOException e1) {
+			e1.printStackTrace();
+		}
 	}
 	
 	class TableEvent extends MouseAdapter {
+		@Override
 		public void mouseClicked(MouseEvent e) {
-			SelectRow = menuTable.getSelectedRow();
-			nameField.setText((String)menuTable.getValueAt(SelectRow,0));
-			priceField.setText((String)menuTable.getValueAt(SelectRow,1));
-			stockField.setText((String)menuTable.getValueAt(SelectRow,2));
-	      }
-	}
-
-	public void addMenu() {    // Add버튼 누르면 실행
-		if(nameField.getText() == ""||priceField.getText() == "" ||stockField.getText()== "") {
-			JOptionPane.showMessageDialog(this,"추가할 상품 정보 입력");
+			SelectRow = table.getSelectedRow();
+			nameField.setText((String)table.getValueAt(SelectRow,0));
+			priceField.setText((String)table.getValueAt(SelectRow,1));
+			stockField.setText((String)table.getValueAt(SelectRow,2));
 		}
-		
-		Vector<String> v = new Vector<>();
-        v.add(nameField.getText());
-        v.add(priceField.getText());
-        v.add(stockField.getText());
-       
-        inputPrice = Integer.parseInt(priceField.getText());
-        inputStock = Integer.parseInt(stockField.getText());
-        
-        v.add(String.valueOf(inputPrice));
-        v.add(String.valueOf(inputStock));
-        menuModel.addRow(v);
-        
-        //입력값 지워주는 부분
-        nameField.setText("");
-        priceField.setText("");
-        stockField.setText("");
-        nameField.requestFocus();   // 커서 이름으로 돌아옴
 	}
 	
-	public void deleteMenu() {
-		if(SelectRow == -1) {
-            JOptionPane.showMessageDialog(this,"삭제할 열 선택");
-            return;
-         }
-		
-         menuModel.removeRow(SelectRow);
-         SelectRow = -1;
-	}
-	
-	public void editMenu() {
-		if(SelectRow == -1) {
-			JOptionPane.showMessageDialog(this,"수정할 열 선택");
-			return;
+	@Override
+	public void actionPerformed(ActionEvent e) {
+		Object ob = e.getSource();
+		if(ob == btnAdd) {
+			Vector<String> v = new Vector();
+			v.add(nameField.getText());
+			v.add(priceField.getText());
+			v.add(stockField.getText());
+			model.addRow(v);
+			// 입력값 지워주는부분
+			nameField.setText("");
+			priceField.setText("");
+			stockField.setText("");
+			nameField.requestFocus();	// 커서 이름으로 돌아옴
 		}
-		
-		inputPrice = Integer.parseInt(priceField.getText());
-		inputStock = Integer.parseInt(stockField.getText());
-        
-		menuModel.setValueAt(nameField.getText(),SelectRow,0);
-		menuModel.setValueAt(inputPrice,SelectRow,1);
-		menuModel.setValueAt(inputStock,SelectRow,2);
-        
-		SelectRow = -1;    // SelectRow초기화
-        
-		// 입력값 지워주는 부분
-		nameField.setText("");
-		priceField.setText("");
-		stockField.setText("");
-		nameField.requestFocus();	// 커서 이름으로 돌아옴
-	}
-	
-	public void actionPerformed(ActionEvent e3) {
-		if(e3.getSource() == btnAdd) {
-			addMenu();
+		else if(ob == btnDel) {
+			if(SelectRow < 0) {
+				JOptionPane.showMessageDialog(this, "삭제할 행을 선택하세요", "오류", JOptionPane.WARNING_MESSAGE);
+				return;
+			}
+			String msg = table.getValueAt(SelectRow, 0) + "삭제하시겠습니까?";
+			int ans = JOptionPane.showConfirmDialog(this, msg, "삭제확인완료", JOptionPane.YES_NO_OPTION);
+			if(ans == JOptionPane.YES_OPTION) {
+				model.removeRow(SelectRow);
+				JOptionPane.showMessageDialog(this, "삭제되었습니다");
+				SelectRow = -1;
+			}
 		}
-		
-		else if(e3.getSource() == btnDel) {
-			deleteMenu();
+		else if(ob == btnMod) {
+			if(SelectRow < 0) {
+				JOptionPane.showMessageDialog(this, "수정할 행을 선택하세요", "오류", JOptionPane.WARNING_MESSAGE);
+				return;
+			}
+			int ans = JOptionPane.showConfirmDialog(this, table.getValueAt(SelectRow, 0) + "수정하시겠습니까?", "수정", JOptionPane.YES_NO_OPTION);
+			if(ans == JOptionPane.YES_OPTION) {
+				model.setValueAt(nameField.getText(), SelectRow, 0);
+				model.setValueAt(priceField.getText(), SelectRow, 1);
+				model.setValueAt(stockField.getText(), SelectRow, 2);
+				
+				SelectRow = -1;
+				nameField.setText("");
+				priceField.setText("");
+				stockField.setText("");
+				nameField.requestFocus();
+			}
 		}
-		
-		else if(e3.getSource() == btnEdit) {
-			editMenu();
+		else if(ob == btnSave) {
+			// 파일 저장
+			FileWriter fw = null;
+			try {
+				fw = new FileWriter("./menu.dat");
+				fw.write(String.valueOf(model.getRowCount()) + "\n");
+				fw.write(String.valueOf(model.getColumnCount()) + "\n");
+				for(int i=0; i<model.getRowCount(); i++) {
+					for(int j=0; j<model.getColumnCount(); j++) {
+						String data = (String)model.getValueAt(i, j);
+						fw.write(data + "\n");
+					}
+				}
+			} catch(IOException e1) {
+				e1.printStackTrace();
+			} finally {
+				try {
+					fw.close();
+				} catch(IOException e1) {
+					e1.printStackTrace();
+				}
+			}
 		}
 	}
 }
