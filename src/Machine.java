@@ -1,10 +1,11 @@
 import javax.swing.*;
-import javax.swing.table.*;
+//import javax.swing.table.*;
 import java.awt.*;
 import java.awt.event.*;
 import java.io.*;
-import java.util.*;
+//import java.util.*;
 
+@SuppressWarnings("serial")
 class Login extends JFrame implements ActionListener {
 	private String password = "123";    // 비밀번호를 123으로 설정 
 	private JPasswordField passwordField;
@@ -43,6 +44,7 @@ class Login extends JFrame implements ActionListener {
 		return isLogin;
 	}
 	
+	@SuppressWarnings("deprecation")
 	@Override
 	public void actionPerformed(ActionEvent e1) {
 		if(e1.getSource() == login) {
@@ -55,14 +57,13 @@ class Login extends JFrame implements ActionListener {
 					loginText.setText("로그인되었습니다. 안녕하세요.");
 					switch(num) {
 					case 1:
-						Menu menu = new Menu("메뉴 관리");
+						new Menu("메뉴 관리");
 						break;
 					case 2:
-						Sales sales = new Sales("매출 관리");
+						new Sales("매출 관리");
 						break;
 					case 3:
-						Money money = new Money();
-						money.addMoney();
+						new Money("잔돈 관리");
 						break;
 					}
 				}
@@ -77,6 +78,7 @@ class Login extends JFrame implements ActionListener {
 	}
 }
 
+@SuppressWarnings("serial")
 class Machine extends JFrame {    // 실행시키면 실행
 	public Machine() {
 		setTitle("Vending Machine");
@@ -110,17 +112,16 @@ class Machine extends JFrame {    // 실행시키면 실행
 	class MenuActionListener implements ActionListener {
 		public void actionPerformed(ActionEvent e4) {
 			String cmd = e4.getActionCommand();
-			Login login;
 			
 			switch(cmd) {
 			case "메뉴 관리":
-				login = new Login(1);
+				new Login(1);
 				break;
 			case "매출 관리":
-				login = new Login(2);
+				new Login(2);
 				break;
 			case "잔돈 관리":
-				login = new Login(3);
+				new Login(3);
 				break;
 			}
 		}
@@ -142,6 +143,8 @@ class Machine extends JFrame {    // 실행시키면 실행
 					str[j] = data;
 				}
 				menuButton = new JButton(str[0]);
+				menuButton.setSize(100,100);
+				menuButton.setLocation(120, 120);
 				panel.add(menuButton);
 			}
 		} catch(FileNotFoundException e1) {

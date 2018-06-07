@@ -5,8 +5,8 @@ import java.awt.event.*;
 import java.io.*;
 import java.util.*;
 
+@SuppressWarnings("serial")
 public class Menu extends JFrame implements ActionListener {
-	//private static final int SelectColumn=0;
 	Container cp;
 	JTextField nameField,priceField,stockField;
 	JButton btnAdd,btnDel,btnMod,btnSave;
@@ -103,7 +103,7 @@ public class Menu extends JFrame implements ActionListener {
 	public void actionPerformed(ActionEvent e) {
 		Object ob = e.getSource();
 		if(ob == btnAdd) {
-			Vector<String> v = new Vector();
+			Vector<String> v = new Vector<String>();
 			v.add(nameField.getText());
 			v.add(priceField.getText());
 			v.add(stockField.getText());
