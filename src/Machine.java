@@ -4,6 +4,7 @@ import java.awt.*;
 import java.awt.event.*;
 import java.io.*;
 //import java.util.*;
+import java.util.Vector;
 
 @SuppressWarnings("serial")
 class Login extends JFrame implements ActionListener {
@@ -79,11 +80,13 @@ class Login extends JFrame implements ActionListener {
 }
 
 @SuppressWarnings("serial")
-class Machine extends JFrame {    // 실행시키면 실행
+class Machine extends JFrame implements ActionListener {    // 실행시키면 실행
+	String[] menuArr = new String[12];
+	
 	public Machine() {
 		setTitle("Vending Machine");
 		createMachineWindow();
-		setSize(500,500);
+		setSize(450,700);
 		setVisible(true);
 		this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 	}
@@ -105,6 +108,7 @@ class Machine extends JFrame {    // 실행시키면 실행
 		menuBar.add(screenMenu);
 		setJMenuBar(menuBar);
 		
+		panel.setLayout(null);
 		this.printMenu(panel);
 		c.add(panel);
 	}
@@ -130,22 +134,34 @@ class Machine extends JFrame {    // 실행시키면 실행
 	public void printMenu(JPanel panel) {
 		FileReader fr = null;
 		BufferedReader br = null;
-		JButton menuButton;
+		JButton[] menuButton = new JButton[12];
 		try {
 			fr = new FileReader("./menu.dat");
 			br = new BufferedReader(fr);
 			int row = Integer.parseInt(br.readLine());
 			int col = Integer.parseInt(br.readLine());
-			String[] str = new String[col];
 			for(int i=0; i<row; i++) {
+				if(i>11) break;
 				for(int j=0; j<col; j++) {
 					String data = br.readLine();
-					str[j] = data;
+					menuArr[j] = data;
 				}
-				menuButton = new JButton(str[0]);
-				menuButton.setSize(100,100);
-				menuButton.setLocation(120, 120);
-				panel.add(menuButton);
+				menuButton[i] = new JButton(menuArr[0]);
+				menuButton[i].setFont(new Font("돋움체", Font.PLAIN, 12));
+				if(i<3) {
+					menuButton[i].setBounds(130*i+30, 30, 100, 30);
+				}
+				else if(i<6) {
+					menuButton[i].setBounds(130*(i-3)+30, 130, 100, 30);
+				}
+				else if(i<9) {
+					menuButton[i].setBounds(130*(i-6)+30, 230, 100, 30);
+				}
+				else {
+					menuButton[i].setBounds(130*(i-9)+30, 330, 100, 30);
+				}
+				panel.add(menuButton[i]);
+				menuButton[i].addActionListener(this);
 			}
 		} catch(FileNotFoundException e1) {
 			e1.printStackTrace();
@@ -153,6 +169,18 @@ class Machine extends JFrame {    // 실행시키면 실행
 			e1.printStackTrace();
 		} catch(IOException e1) {
 			e1.printStackTrace();
+		}
+	}
+	
+	public void actionPerformed(ActionEvent e) {
+		Object ob = e.getSource();
+		Sales sales = new Sales();
+		
+		for(int i=0; i<12; i++) {
+			if(ob == menuArr[i]) {
+				sales.addSales();
+				sales.saveSales();
+			}
 		}
 	}
 }

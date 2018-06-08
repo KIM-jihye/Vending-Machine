@@ -4,9 +4,11 @@ import java.awt.*;
 //import java.awt.event.*;
 import java.io.*;
 //import java.util.*;
+import java.util.Vector;
 
 @SuppressWarnings("serial")
 public class Sales extends JFrame {
+	JTextField nameField,priceField;
 	Container cp;
 	DefaultTableModel model;
 	JTable table;
@@ -14,6 +16,9 @@ public class Sales extends JFrame {
 	int SelectRow = -1;
 	int salesSum;
 	
+	Sales() {
+		
+	}
 	
 	Sales(String title) {
 		super(title);
@@ -27,7 +32,7 @@ public class Sales extends JFrame {
 		JPanel pBottom = new JPanel();
 		cp.add("South",pBottom);
 		// 중간
-		String[] title = {"상품명","가격","재고","매출 합계"};
+		String[] title = {"상품명","가격"};
 		model = new DefaultTableModel(title, 0);
 		table = new JTable(model);
 		jsp = new JScrollPane(table);
@@ -35,6 +40,7 @@ public class Sales extends JFrame {
 		
 		this.openSales();
 	}
+	
 	
 	public void openSales() {
 		FileReader fr = null;
@@ -95,6 +101,15 @@ public class Sales extends JFrame {
 			fw = new FileWriter("./sales.dat");
 			bw = new BufferedWriter(fw);
 			pw = new PrintWriter(bw);
+			
+			Vector<String> v = new Vector<String>();
+			v.add(nameField.getText());
+			v.add(priceField.getText());
+			model.addRow(v);
+			// 입력값 지워주는부분
+			nameField.setText("");
+			priceField.setText("");
+			nameField.requestFocus();	// 커서 이름으로 돌아옴
 
 			fw.write(String.valueOf(model.getRowCount()) + "\n");
 			fw.write(String.valueOf(model.getColumnCount()) + "\n");
