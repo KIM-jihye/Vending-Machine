@@ -8,7 +8,6 @@ import java.util.Vector;
 
 @SuppressWarnings("serial")
 public class Sales extends JFrame {
-	JTextField nameField,priceField;
 	Container cp;
 	DefaultTableModel model;
 	JTable table;
@@ -52,8 +51,8 @@ public class Sales extends JFrame {
 			}
 			fr = new FileReader("./sales.dat");
 			br = new BufferedReader(fr);
-			int row = Integer.parseInt(br.readLine());
-			int col = Integer.parseInt(br.readLine());
+			int row = Integer.parseInt(br.readLine().trim());
+			int col = Integer.parseInt(br.readLine().trim());
 			String[] str = new String[col];
 			model.setRowCount(0);
 			if(!(salesFile == null))
