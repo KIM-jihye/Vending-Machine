@@ -82,6 +82,8 @@ class Login extends JFrame implements ActionListener {
 @SuppressWarnings("serial")
 class Machine extends JFrame implements ActionListener {    // 실행시키면 실행
 	String[] menuArr = new String[12];
+	String[] priceArr = new String[12];
+	String[] arr;
 	
 	public Machine() {
 		setTitle("Vending Machine");
@@ -135,18 +137,22 @@ class Machine extends JFrame implements ActionListener {    // 실행시키면 실행
 		FileReader fr = null;
 		BufferedReader br = null;
 		JButton[] menuButton = new JButton[12];
+		
 		try {
 			fr = new FileReader("./menu.dat");
 			br = new BufferedReader(fr);
 			int row = Integer.parseInt(br.readLine());
 			int col = Integer.parseInt(br.readLine());
+			arr = new String[col];
 			for(int i=0; i<row; i++) {
 				if(i>11) break;
 				for(int j=0; j<col; j++) {
 					String data = br.readLine();
-					menuArr[j] = data;
+					arr[j] = data;
 				}
-				menuButton[i] = new JButton(menuArr[0]);
+				menuArr[i] = arr[0];
+				priceArr[i] = arr[1];
+				menuButton[i] = new JButton(menuArr[i]);
 				menuButton[i].setFont(new Font("돋움체", Font.PLAIN, 12));
 				if(i<3) {
 					menuButton[i].setBounds(130*i+30, 30, 100, 30);
@@ -178,7 +184,7 @@ class Machine extends JFrame implements ActionListener {    // 실행시키면 실행
 		
 		for(int i=0; i<12; i++) {
 			if(ob == menuArr[i]) {
-				sales.addSales();
+				sales.addSales(menuArr[i], priceArr[i]);
 				sales.saveSales();
 			}
 		}

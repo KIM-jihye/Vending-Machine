@@ -66,6 +66,10 @@ public class Menu extends JFrame implements ActionListener {
 		FileReader fr = null;
 		BufferedReader br = null;
 		try {
+			File menuFile = new File("./menu.dat");
+			if(!menuFile.exists()) {
+				menuFile.createNewFile();
+			}
 			fr = new FileReader("./menu.dat");
 			br = new BufferedReader(fr);
 			int row = Integer.parseInt(br.readLine());
@@ -103,16 +107,21 @@ public class Menu extends JFrame implements ActionListener {
 	public void actionPerformed(ActionEvent e) {
 		Object ob = e.getSource();
 		if(ob == btnAdd) {
-			Vector<String> v = new Vector<String>();
-			v.add(nameField.getText());
-			v.add(priceField.getText());
-			v.add(stockField.getText());
-			model.addRow(v);
-			// 입력값 지워주는부분
-			nameField.setText("");
-			priceField.setText("");
-			stockField.setText("");
-			nameField.requestFocus();	// 커서 이름으로 돌아옴
+			if(model.getRowCount() >= 12) {
+				JOptionPane.showMessageDialog(this, "12개가 최대 개수입니다.", "오류", JOptionPane.WARNING_MESSAGE);
+			}
+			else {
+				Vector<String> v = new Vector<String>();
+				v.add(nameField.getText());
+				v.add(priceField.getText());
+				v.add(stockField.getText());
+				model.addRow(v);
+				// 입력값 지워주는부분
+				nameField.setText("");
+				priceField.setText("");
+				stockField.setText("");
+				nameField.requestFocus();	// 커서 이름으로 돌아옴
+			}
 		}
 		else if(ob == btnDel) {
 			if(SelectRow < 0) {

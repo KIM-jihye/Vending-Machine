@@ -3,7 +3,7 @@ import javax.swing.table.*;
 import java.awt.*;
 //import java.awt.event.*;
 import java.io.*;
-//import java.util.*;
+import java.util.*;
 import java.util.Vector;
 
 @SuppressWarnings("serial")
@@ -46,19 +46,24 @@ public class Sales extends JFrame {
 		FileReader fr = null;
 		BufferedReader br = null;
 		try {
+			File salesFile = new File("./sales.dat");
+			if(!salesFile.exists()) {
+				salesFile.createNewFile();
+			}
 			fr = new FileReader("./sales.dat");
 			br = new BufferedReader(fr);
 			int row = Integer.parseInt(br.readLine());
 			int col = Integer.parseInt(br.readLine());
 			String[] str = new String[col];
 			model.setRowCount(0);
-			for(int i=0; i<row; i++) {
-				for(int j=0; j<col; j++) {
-					String data = br.readLine();
-					str[j] = data;
+			if(!(salesFile == null))
+				for(int i=0; i<row; i++) {
+					for(int j=0; j<col; j++) {
+						String data = br.readLine();
+						str[j] = data;
+					}
+					model.addRow(str);
 				}
-				model.addRow(str);
-			}
 			br.close();
 		} catch(FileNotFoundException e1) {
 			e1.printStackTrace();
@@ -93,7 +98,7 @@ public class Sales extends JFrame {
 		}
 	}
 	
-	public void addSales() {
+	public void addSales(String selectMenu, String selectPrice) {
 		BufferedWriter bw = null;
 		FileWriter fw = null;
 		PrintWriter pw = null;
@@ -103,22 +108,17 @@ public class Sales extends JFrame {
 			pw = new PrintWriter(bw);
 			
 			Vector<String> v = new Vector<String>();
-			v.add(nameField.getText());
-			v.add(priceField.getText());
+			v.add(selectMenu);
+			v.add(selectPrice);
 			model.addRow(v);
-			// 입력값 지워주는부분
-			nameField.setText("");
-			priceField.setText("");
-			nameField.requestFocus();	// 커서 이름으로 돌아옴
-
-			fw.write(String.valueOf(model.getRowCount()) + "\n");
-			fw.write(String.valueOf(model.getColumnCount()) + "\n");
-			for(int i=0; i<model.getRowCount(); i++) {
-				for(int j=0; j<model.getColumnCount(); j++) {
-					String data = (String)model.getValueAt(i, j);
-					pw.write(data + "\n");
-				}
-			}
+//			fw.write(String.valueOf(model.getRowCount()) + "\n");
+//			fw.write(String.valueOf(model.getColumnCount()) + "\n");
+//			for(int i=0; i<model.getRowCount(); i++) {
+//				for(int j=0; j<model.getColumnCount(); j++) {
+//					String data = (String)model.getValueAt(i, j);
+//					pw.write(data + "\n");
+//				}
+//			}
 		} catch(IOException e2) {
 			e2.printStackTrace();
 		} finally {
