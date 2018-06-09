@@ -1,10 +1,9 @@
 import javax.swing.*;
-//import javax.swing.table.*;
+import javax.swing.table.*;
 import java.awt.*;
 import java.awt.event.*;
 import java.io.*;
-//import java.util.*;
-import java.util.Vector;
+import java.util.*;
 
 @SuppressWarnings("serial")
 class Login extends JFrame implements ActionListener {
@@ -80,42 +79,62 @@ class Login extends JFrame implements ActionListener {
 }
 
 @SuppressWarnings("serial")
-class Machine extends JFrame implements ActionListener {    // 실행시키면 실행
-	String[] menuArr = new String[12];
-	String[] priceArr = new String[12];
+class Machine extends JFrame {    // 실행시키면 실행
+	Container c;
+	JTextField inputMoneyField;
+	JButton btnInputMoney;
+	JButton[] menuButton = new JButton[12];
+	String[] menuArr;
+	String[] priceArr;
 	String[] arr;
 	
 	public Machine() {
 		setTitle("Vending Machine");
+		c = this.getContentPane();
 		createMachineWindow();
-		setSize(450,700);
+		setSize(450,600);
 		setVisible(true);
 		this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 	}
 	
 	public void createMachineWindow() {    // 자판기 창 생성
+		JPanel menuPanel = new JPanel();
+		c.add(menuPanel);
+		JPanel moneyPanel = new JPanel();
+		c.add(BorderLayout.AFTER_LAST_LINE,moneyPanel);
+		
+		// 메뉴바 생성
 		JMenuBar menuBar = new JMenuBar();
 		JMenuItem[] menuItem = new JMenuItem[3];
 		String[] itemTitle = {"메뉴 관리", "매출 관리", "잔돈 관리"};
 		JMenu screenMenu = new JMenu("관리자");
-		Container c = this.getContentPane();
-		JPanel panel = new JPanel();
 		
-		MenuActionListener listener = new MenuActionListener();
+		MenuBarActionListener barAction = new MenuBarActionListener();
 		for(int i=0; i<menuItem.length; i++) {
 			menuItem[i] = new JMenuItem(itemTitle[i]);
-			menuItem[i].addActionListener(listener);
+			menuItem[i].addActionListener(barAction);
 			screenMenu.add(menuItem[i]);
 		}
 		menuBar.add(screenMenu);
 		setJMenuBar(menuBar);
 		
-		panel.setLayout(null);
-		this.printMenu(panel);
-		c.add(panel);
-	}
+		// 자판기 메뉴 창 생성
+		menuPanel.setLayout(null);
+		this.printMenu(menuPanel);
+		
+		// USER 사용 창 생성		
+		JLabel label = new JLabel("투입 금액");
+		inputMoneyField = new JTextField(7);
+		btnInputMoney = new JButton("돈 넣기");
+
+	    moneyPanel.add(label);
+	    moneyPanel.add(inputMoneyField);
+	    moneyPanel.add(btnInputMoney);
+	    MenuActionListener menuAction = new MenuActionListener();
+	    btnInputMoney.addActionListener(menuAction);
+		}
 	
-	class MenuActionListener implements ActionListener {
+	class MenuBarActionListener implements ActionListener {
 		public void actionPerformed(ActionEvent e4) {
 			String cmd = e4.getActionCommand();
 			
@@ -136,10 +155,11 @@ class Machine extends JFrame implements ActionListener {    // 실행시키면 실행
 	public void printMenu(JPanel panel) {
 		FileReader fr = null;
 		BufferedReader br = null;
-		JButton[] menuButton = new JButton[12];
+		menuArr = new String[12];
+		priceArr = new String[12];
 		
 		try {
-			fr = new FileReader("./menu.dat");
+			fr = new FileReader("./menu.txt");
 			br = new BufferedReader(fr);
 			int row = Integer.parseInt(br.readLine());
 			int col = Integer.parseInt(br.readLine());
@@ -153,22 +173,27 @@ class Machine extends JFrame implements ActionListener {    // 실행시키면 실행
 				menuArr[i] = arr[0];
 				priceArr[i] = arr[1];
 				menuButton[i] = new JButton(menuArr[i]);
+				MenuActionListener listener = new MenuActionListener();
 				menuButton[i].setFont(new Font("돋움체", Font.PLAIN, 12));
 				if(i<3) {
 					menuButton[i].setBounds(130*i+30, 30, 100, 30);
+					menuButton[i].addActionListener(listener);
 				}
 				else if(i<6) {
 					menuButton[i].setBounds(130*(i-3)+30, 130, 100, 30);
+					menuButton[i].addActionListener(listener);
 				}
 				else if(i<9) {
 					menuButton[i].setBounds(130*(i-6)+30, 230, 100, 30);
+					menuButton[i].addActionListener(listener);
 				}
 				else {
 					menuButton[i].setBounds(130*(i-9)+30, 330, 100, 30);
+					menuButton[i].addActionListener(listener);
 				}
 				panel.add(menuButton[i]);
-				menuButton[i].addActionListener(this);
 			}
+			
 		} catch(FileNotFoundException e1) {
 			e1.printStackTrace();
 		} catch(NumberFormatException e1) {
@@ -178,14 +203,20 @@ class Machine extends JFrame implements ActionListener {    // 실행시키면 실행
 		}
 	}
 	
-	public void actionPerformed(ActionEvent e) {
-		Object ob = e.getSource();
-		Sales sales = new Sales();
-		
-		for(int i=0; i<12; i++) {
-			if(ob == menuArr[i]) {
-				sales.addSales(menuArr[i], priceArr[i]);
-				sales.saveSales();
+	class MenuActionListener implements ActionListener {
+		public void actionPerformed(ActionEvent e5) {
+			Object ob = e5.getSource();
+			
+			for(int i=0; i<12; i++) {
+				if(ob == menuButton[i]) {
+					Sales sales = new Sales("매출 추가");
+					sales.addSales(menuArr[i], priceArr[i]);
+					sales.saveSales();
+				}
+			}
+			if(ob == "투입") {
+				Money money = new Money();
+				
 			}
 		}
 	}

@@ -66,11 +66,11 @@ public class Menu extends JFrame implements ActionListener {
 		FileReader fr = null;
 		BufferedReader br = null;
 		try {
-			File menuFile = new File("./menu.dat");
+			File menuFile = new File("./menu.txt");
 			if(!menuFile.exists()) {
 				menuFile.createNewFile();
 			}
-			fr = new FileReader("./menu.dat");
+			fr = new FileReader("./menu.txt");
 			br = new BufferedReader(fr);
 			int row = Integer.parseInt(br.readLine());
 			int col = Integer.parseInt(br.readLine());
@@ -103,79 +103,159 @@ public class Menu extends JFrame implements ActionListener {
 		}
 	}
 	
-	@Override
-	public void actionPerformed(ActionEvent e) {
-		Object ob = e.getSource();
-		if(ob == btnAdd) {
-			if(model.getRowCount() >= 12) {
-				JOptionPane.showMessageDialog(this, "12개가 최대 개수입니다.", "오류", JOptionPane.WARNING_MESSAGE);
+	public void addMenu() {
+		boolean existMenu=false;
+		
+		if(model.getRowCount() >= 12) {
+			JOptionPane.showMessageDialog(this, "12개가 최대 개수입니다.", "오류", JOptionPane.WARNING_MESSAGE);
+		}
+		else {
+			for(int i=0; i<model.getRowCount(); i++) {
+				existMenu = model.getValueAt(i,0).equals(nameField.getText());
+				if(existMenu)	break;
 			}
-			else {
-				Vector<String> v = new Vector<String>();
-				v.add(nameField.getText());
-				v.add(priceField.getText());
-				v.add(stockField.getText());
-				model.addRow(v);
+			if(existMenu) {
+				JOptionPane.showMessageDialog(this, "이미 존재하는 메뉴입니다.", "오류", JOptionPane.WARNING_MESSAGE);
 				// 입력값 지워주는부분
 				nameField.setText("");
 				priceField.setText("");
 				stockField.setText("");
 				nameField.requestFocus();	// 커서 이름으로 돌아옴
 			}
-		}
-		else if(ob == btnDel) {
-			if(SelectRow < 0) {
-				JOptionPane.showMessageDialog(this, "삭제할 행을 선택하세요", "오류", JOptionPane.WARNING_MESSAGE);
-				return;
-			}
-			String msg = table.getValueAt(SelectRow, 0) + "삭제하시겠습니까?";
-			int ans = JOptionPane.showConfirmDialog(this, msg, "삭제확인완료", JOptionPane.YES_NO_OPTION);
-			if(ans == JOptionPane.YES_OPTION) {
-				model.removeRow(SelectRow);
-				JOptionPane.showMessageDialog(this, "삭제되었습니다");
-				SelectRow = -1;
-			}
-		}
-		else if(ob == btnMod) {
-			if(SelectRow < 0) {
-				JOptionPane.showMessageDialog(this, "수정할 행을 선택하세요", "오류", JOptionPane.WARNING_MESSAGE);
-				return;
-			}
-			int ans = JOptionPane.showConfirmDialog(this, table.getValueAt(SelectRow, 0) + "수정하시겠습니까?", "수정", JOptionPane.YES_NO_OPTION);
-			if(ans == JOptionPane.YES_OPTION) {
-				model.setValueAt(nameField.getText(), SelectRow, 0);
-				model.setValueAt(priceField.getText(), SelectRow, 1);
-				model.setValueAt(stockField.getText(), SelectRow, 2);
+			else {
+				Vector<String> v = new Vector<String>();
 				
-				SelectRow = -1;
+				try {
+					int priceToInt = Integer.parseInt(priceField.getText());
+					int stockToInt = Integer.parseInt(stockField.getText());
+					if(priceToInt<=0 || stockToInt<=0 || nameField.getText().equals("")) {
+						JOptionPane.showMessageDialog(this, "잘못 입력하셨습니다.", "오류", JOptionPane.WARNING_MESSAGE);
+					}
+					else {
+						v.add(nameField.getText());
+						v.add(priceField.getText());
+						v.add(stockField.getText());
+						model.addRow(v);
+					}
+				} catch(NumberFormatException e) {
+					JOptionPane.showMessageDialog(this, "잘못 입력하셨습니다.", "오류", JOptionPane.WARNING_MESSAGE);
+				} finally {
+					// 입력값 지워주는부분
+					nameField.setText("");
+					priceField.setText("");
+					stockField.setText("");
+					nameField.requestFocus();	// 커서 이름으로 돌아옴
+				}
+			}
+		}
+	}
+	
+	public void deleteMenu() {
+		if(SelectRow < 0) {
+			JOptionPane.showMessageDialog(this, "삭제할 행을 선택하세요", "오류", JOptionPane.WARNING_MESSAGE);
+			return;
+		}
+		String msg = table.getValueAt(SelectRow, 0) + " 를 삭제하시겠습니까?";
+		int ans = JOptionPane.showConfirmDialog(this, msg, "삭제확인완료", JOptionPane.YES_NO_OPTION);
+		if(ans == JOptionPane.YES_OPTION) {
+			model.removeRow(SelectRow);
+			JOptionPane.showMessageDialog(this, "삭제되었습니다");
+			SelectRow = -1;
+			
+			// 입력값 지워주는부분
+			nameField.setText("");
+			priceField.setText("");
+			stockField.setText("");
+			nameField.requestFocus();	// 커서 이름으로 돌아옴
+		}
+	}
+	
+	public void modMenu() {
+		boolean existMenu=false;
+		
+		if(SelectRow < 0) {
+			JOptionPane.showMessageDialog(this, "수정할 행을 선택하세요", "오류", JOptionPane.WARNING_MESSAGE);
+			return;
+		}
+		int ans = JOptionPane.showConfirmDialog(this, table.getValueAt(SelectRow, 0) + " 를 수정하시겠습니까?", "수정", JOptionPane.YES_NO_OPTION);
+		if(ans == JOptionPane.YES_OPTION) {
+			for(int i=0; i<model.getRowCount(); i++) {
+				existMenu = model.getValueAt(i,0).equals(nameField.getText());
+				if(existMenu)	break;
+			}
+			if(existMenu) {
+				JOptionPane.showMessageDialog(this, "이미 존재하는 메뉴입니다.", "오류", JOptionPane.WARNING_MESSAGE);
+				// 입력값 지워주는부분
 				nameField.setText("");
 				priceField.setText("");
 				stockField.setText("");
-				nameField.requestFocus();
+				nameField.requestFocus();	// 커서 이름으로 돌아옴
+			}
+			
+			else {
+				try {
+					int priceToInt = Integer.parseInt(priceField.getText());
+					int stockToInt = Integer.parseInt(stockField.getText());
+					if(priceToInt<=0 || stockToInt<=0 || nameField.getText().equals("")) {
+						JOptionPane.showMessageDialog(this, "잘못 입력하셨습니다.", "오류", JOptionPane.WARNING_MESSAGE);
+					}
+					else {
+						model.setValueAt(nameField.getText(), SelectRow, 0);
+						model.setValueAt(priceField.getText(), SelectRow, 1);
+						model.setValueAt(stockField.getText(), SelectRow, 2);
+					}
+				} catch(NumberFormatException e) {
+					JOptionPane.showMessageDialog(this, "잘못 입력하셨습니다.", "오류", JOptionPane.WARNING_MESSAGE);
+				} finally {
+					// 입력값 지워주는부분
+					nameField.setText("");
+					priceField.setText("");
+					stockField.setText("");
+					nameField.requestFocus();	// 커서 이름으로 돌아옴
+				}
 			}
 		}
-		else if(ob == btnSave) {
-			// 파일 저장
-			FileWriter fw = null;
-			try {
-				fw = new FileWriter("./menu.dat");
-				fw.write(String.valueOf(model.getRowCount()) + "\n");
-				fw.write(String.valueOf(model.getColumnCount()) + "\n");
-				for(int i=0; i<model.getRowCount(); i++) {
-					for(int j=0; j<model.getColumnCount(); j++) {
-						String data = (String)model.getValueAt(i, j);
-						fw.write(data + "\n");
-					}
-				}
-			} catch(IOException e1) {
-				e1.printStackTrace();
-			} finally {
-				try {
-					fw.close();
-				} catch(IOException e1) {
-					e1.printStackTrace();
+	}
+	
+	public void saveMenu() {
+		// 파일 저장
+		FileWriter fw = null;
+		try {
+			fw = new FileWriter("./menu.txt");
+			fw.write(String.valueOf(model.getRowCount()) + "\n");
+			fw.write(String.valueOf(model.getColumnCount()) + "\n");
+			for(int i=0; i<model.getRowCount(); i++) {
+				for(int j=0; j<model.getColumnCount(); j++) {
+					String data = (String)model.getValueAt(i, j);
+					fw.write(data + "\n");
 				}
 			}
+		} catch(IOException e1) {
+			e1.printStackTrace();
+		} finally {
+			try {
+				fw.close();
+			} catch(IOException e1) {
+				e1.printStackTrace();
+			}
+		}
+	}
+	
+	@Override
+	public void actionPerformed(ActionEvent e) {
+		Object ob = e.getSource();
+		
+		if(ob == btnAdd) {
+			this.addMenu();
+		}
+		else if(ob == btnDel) {
+			this.deleteMenu();
+		}
+		else if(ob == btnMod) {
+			this.modMenu();
+		}
+		else if(ob == btnSave) {
+			this.saveMenu();
 		}
 	}
 }

@@ -1,39 +1,43 @@
 import javax.swing.*;
 import javax.swing.table.*;
 import java.awt.*;
-//import java.awt.event.*;
+import java.awt.event.*;
 import java.io.*;
 import java.util.*;
 import java.util.Vector;
 
 @SuppressWarnings("serial")
 public class Sales extends JFrame {
-	Container cp;
-	DefaultTableModel model;
-	JTable table;
+	Container cp = this.getContentPane();
+	String[] title = {"상품명","가격"};
+	DefaultTableModel model = new DefaultTableModel(title, 0);
+	JTable table = new JTable(model);
 	JScrollPane jsp;
 	int SelectRow = -1;
-	int salesSum;
+	int salesSum = 0;
 	
 	Sales() {
-		
+		return;
 	}
 	
 	Sales(String title) {
 		super(title);
-		cp = this.getContentPane();
-		this.setBounds(100,100,400,400);
-		this.setDesign();
-		this.setVisible(true);
+		if(title == "매출 관리") {
+			cp = this.getContentPane();
+			this.setBounds(100,100,400,400);
+			this.setDesign();
+			this.setVisible(true);
+		}
+		if(title == "매출 추가") {
+		}
 	}
 	
 	public void setDesign() {
-		JPanel pBottom = new JPanel();
-		cp.add("South",pBottom);
-		// 중간
-		String[] title = {"상품명","가격"};
-		model = new DefaultTableModel(title, 0);
-		table = new JTable(model);
+		JLabel salesSumLabel = new JLabel("매출 합계 : " + this.getSalesSum());
+		JPanel panel = new JPanel();
+		panel.add(salesSumLabel);
+		cp.add("South",panel);
+		
 		jsp = new JScrollPane(table);
 		cp.add("Center",jsp);
 		
@@ -44,25 +48,26 @@ public class Sales extends JFrame {
 	public void openSales() {
 		FileReader fr = null;
 		BufferedReader br = null;
+		int row=this.getRowNum();
 		try {
-			File salesFile = new File("./sales.dat");
+			File salesFile = new File("./sales.txt");
 			if(!salesFile.exists()) {
 				salesFile.createNewFile();
 			}
-			fr = new FileReader("./sales.dat");
+			fr = new FileReader("./sales.txt");
 			br = new BufferedReader(fr);
-			int row = Integer.parseInt(br.readLine().trim());
-			int col = Integer.parseInt(br.readLine().trim());
-			String[] str = new String[col];
+			
+			String[] str = new String[2];
 			model.setRowCount(0);
-			if(!(salesFile == null))
-				for(int i=0; i<row; i++) {
-					for(int j=0; j<col; j++) {
-						String data = br.readLine();
-						str[j] = data;
-					}
-					model.addRow(str);
+
+			for(int i=0; i<row; i++) {
+				for(int j=0; j<2; j++) {
+					String data = br.readLine();
+					str[j] = data;
 				}
+				model.addRow(str);
+			}
+			
 			br.close();
 		} catch(FileNotFoundException e1) {
 			e1.printStackTrace();
@@ -73,13 +78,72 @@ public class Sales extends JFrame {
 		}
 	}
 	
+	public int getRowNum() {
+		FileReader fr = null;
+		BufferedReader br = null;
+		int num=0;
+		try {
+			File salesFile = new File("./sales.txt");
+			if(!salesFile.exists()) {
+				salesFile.createNewFile();
+			}
+			fr = new FileReader("./sales.txt");
+			br = new BufferedReader(fr);
+			
+			while(br.readLine() != null) {
+				num++;
+			}
+			
+			br.close();
+		} catch(FileNotFoundException e1) {
+			e1.printStackTrace();
+		} catch(NumberFormatException e1) {
+			e1.printStackTrace();
+		} catch(IOException e1) {
+			e1.printStackTrace();
+		}
+		return num/2;
+	}
+	
+	public int getSalesSum() {
+		FileReader fr = null;
+		BufferedReader br = null;
+		int row=this.getRowNum();
+		try {
+			File salesFile = new File("./sales.txt");
+			if(!salesFile.exists()) {
+				salesFile.createNewFile();
+			}
+			fr = new FileReader("./sales.txt");
+			br = new BufferedReader(fr);
+			
+			String[] str = new String[2];
+
+			for(int i=0; i<row; i++) {
+				for(int j=0; j<2; j++) {
+					String data = br.readLine();
+					str[j] = data;
+				}
+				salesSum = salesSum + Integer.parseInt(str[1]);
+			}
+			br.close();
+		} catch(FileNotFoundException e1) {
+			e1.printStackTrace();
+		} catch(NumberFormatException e1) {
+			e1.printStackTrace();
+		} catch(IOException e1) {
+			e1.printStackTrace();
+		}
+		return salesSum;
+	}
+	
 	public void saveSales() {
 		// 파일 저장
 		FileWriter fw = null;
 		try {
-			fw = new FileWriter("./sales.dat");
-			fw.write(String.valueOf(model.getRowCount()) + "\n");
-			fw.write(String.valueOf(model.getColumnCount()) + "\n");
+			fw = new FileWriter("./sales.txt",true);
+			//fw.write(String.valueOf(model.getRowCount()) + "\n");
+			//fw.write(String.valueOf(model.getColumnCount()) + "\n");
 			for(int i=0; i<model.getRowCount(); i++) {
 				for(int j=0; j<model.getColumnCount(); j++) {
 					String data = (String)model.getValueAt(i, j);
@@ -97,32 +161,11 @@ public class Sales extends JFrame {
 		}
 	}
 	
+	
 	public void addSales(String selectMenu, String selectPrice) {
-		BufferedWriter bw = null;
-		FileWriter fw = null;
-		PrintWriter pw = null;
-		try {
-			fw = new FileWriter("./sales.dat");
-			bw = new BufferedWriter(fw);
-			pw = new PrintWriter(bw);
-			
 			Vector<String> v = new Vector<String>();
 			v.add(selectMenu);
 			v.add(selectPrice);
 			model.addRow(v);
-//			fw.write(String.valueOf(model.getRowCount()) + "\n");
-//			fw.write(String.valueOf(model.getColumnCount()) + "\n");
-//			for(int i=0; i<model.getRowCount(); i++) {
-//				for(int j=0; j<model.getColumnCount(); j++) {
-//					String data = (String)model.getValueAt(i, j);
-//					pw.write(data + "\n");
-//				}
-//			}
-		} catch(IOException e2) {
-			e2.printStackTrace();
-		} finally {
-			pw.flush();
-			pw.close();
-		}
 	}
 }

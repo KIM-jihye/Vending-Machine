@@ -20,6 +20,10 @@ public class Money extends JFrame implements ActionListener {
     int c50;
     int c10;
     
+    Money() {
+    	
+    }
+    
    Money(String title) {
       super(title);
       cp = this.getContentPane();
@@ -77,7 +81,7 @@ public class Money extends JFrame implements ActionListener {
       BufferedReader br = null;
       
       try {
-         fr = new FileReader("./money.dat");
+         fr = new FileReader("./money.txt");
          br = new BufferedReader(fr);
          int row = Integer.parseInt(br.readLine());
          int col = Integer.parseInt(br.readLine());
@@ -138,7 +142,7 @@ public class Money extends JFrame implements ActionListener {
          //파일 저장
          FileWriter fw = null;
          try {
-            fw = new FileWriter("./money.dat");
+            fw = new FileWriter("./money.txt");
             fw.write(String.valueOf(model.getRowCount()) + "\n");
             fw.write(String.valueOf(model.getColumnCount()) + "\n");
             for(int i=0; i<model.getRowCount(); i++) {
