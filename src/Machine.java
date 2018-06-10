@@ -90,6 +90,8 @@ class Machine extends JFrame {    // 실행시키면 실행
 	String[] arr;
 	String printMessage1 = "구매하실 품목을 선택하세요.";;
 	String printMessage2;
+	String selectMenu,selectPrice;
+	boolean isBuy=false;
 	
 	public Machine() {
 		setTitle("Vending Machine");
@@ -237,29 +239,71 @@ class Machine extends JFrame {    // 실행시키면 실행
 		}
 	}
 	
-	void buyMessagePrint(String selectMenu, String selectPrice) {
-		printMessage1 = selectMenu + "를 선택하셨습니다. " + selectPrice + "원이 필요합니다.";
+	void buyMessage1Print(String selectMenu, String selectPrice) {
+		printMessage1 = selectMenu + "를 선택하셨습니다. ";
 		int ans = JOptionPane.showConfirmDialog(this, printMessage1, "구매확인", JOptionPane.YES_NO_OPTION);
 		if(ans == JOptionPane.YES_OPTION) {
 			JOptionPane.showMessageDialog(this, selectPrice + "원이 필요합니다.");
 		}
+		else {
+			this.selectMenu = null;
+			selectMenu = null;
+		}
+	}
+	
+	void buyMessage2Print(String selectMenu) {
+		JOptionPane.showMessageDialog(this, selectMenu + " 의 구매가 완료되었습니다.");
+	}
+	
+	void errorMessage1() {
+		JOptionPane.showMessageDialog(this, "메뉴를 선택하세요.", "오류", JOptionPane.WARNING_MESSAGE);
+	}
+	
+	void errorMessage2() {
+		JOptionPane.showMessageDialog(this, "금액이 부족합니다.", "오류", JOptionPane.WARNING_MESSAGE);
+	}
+	
+	void soldOutMessage() {
+		JOptionPane.showMessageDialog(this, "이 품목은 매진되었습니다.", "매진", JOptionPane.WARNING_MESSAGE);
 	}
 	
 	class MenuActionListener implements ActionListener {
 		public void actionPerformed(ActionEvent e5) {
 			Object ob = e5.getSource();
+			Menu menu = new Menu("구매");
 			
 			for(int i=0; i<12; i++) {
 				if(ob == menuButton[i]) {
-//					Sales sales = new Sales("매출 추가");
-//					sales.addSales(menuArr[i], priceArr[i]);
-//					sales.saveSales();
-					buyMessagePrint(menuArr[i], priceArr[i]);
+					selectMenu = menuArr[i];
+					selectPrice = priceArr[i];
+					buyMessage1Print(selectMenu, selectPrice);
 				}
 			}
 			if(ob == btnInputMoney) {
-				Money money = new Money();
-				
+				if(selectMenu == null) {
+					errorMessage1();
+				}
+				else {
+					Money money = new Money("잔돈 계산");
+					isBuy = money.successChange();
+					if(isBuy) {
+						menu.stockReduction(selectMenu);
+						if(menu.isSoldOut()) {
+							soldOutMessage();
+							selectMenu = null;
+						}
+						else {
+							Sales sales = new Sales("매출 추가");
+							sales.addSales(selectMenu, selectPrice);
+							sales.saveSales();
+							buyMessage2Print(selectMenu);
+							selectMenu = null;
+						}
+					}
+					else {
+						errorMessage2();
+					}
+				}
 			}
 		}
 	}

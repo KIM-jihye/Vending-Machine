@@ -7,20 +7,28 @@ import java.util.*;
 
 @SuppressWarnings("serial")
 public class Menu extends JFrame implements ActionListener {
+	String[] title = {"상품명","가격","재고"};
 	Container cp;
 	JTextField nameField,priceField,stockField;
 	JButton btnAdd,btnDel,btnMod,btnSave;
-	DefaultTableModel model;
+	DefaultTableModel model = new DefaultTableModel(title, 0);
 	JTable table;
 	JScrollPane jsp;
 	int SelectRow = -1;
+//	String userSelectMenu=null;
+	boolean soldOut = false; 
 	
-	Menu(String title) {
-		super(title);
-		cp = this.getContentPane();
-		this.setBounds(100,100,400,400);
-		this.setDesign();
-		this.setVisible(true);
+	Menu(String menuTitle) {
+		
+		super(menuTitle);
+		if(menuTitle == "메뉴 관리") {
+			cp = this.getContentPane();
+			this.setBounds(100,100,400,400);
+			this.setDesign();
+			this.setVisible(true);
+		}
+		else {
+		}
 	}
 	
 	public void setDesign() {
@@ -39,8 +47,8 @@ public class Menu extends JFrame implements ActionListener {
 		pTop.add(new JLabel("재고:"));
 		pTop.add(stockField);
 		// 중간
-		String[] title = {"상품명","가격","재고"};
-		model = new DefaultTableModel(title, 0);
+//		String[] title = {"상품명","가격","재고"};
+//		model = new DefaultTableModel(title, 0);
 		table = new JTable(model);
 		table.addMouseListener(new TableEvent());
 		jsp = new JScrollPane(table);
@@ -183,7 +191,7 @@ public class Menu extends JFrame implements ActionListener {
 				existMenu = model.getValueAt(i,0).equals(nameField.getText());
 				if(existMenu)	break;
 			}
-			if(existMenu) {
+			if(existMenu && !model.getValueAt(SelectRow,0).equals(nameField.getText())) {
 				JOptionPane.showMessageDialog(this, "이미 존재하는 메뉴입니다.", "오류", JOptionPane.WARNING_MESSAGE);
 				// 입력값 지워주는부분
 				nameField.setText("");
@@ -237,6 +245,58 @@ public class Menu extends JFrame implements ActionListener {
 				fw.close();
 			} catch(IOException e1) {
 				e1.printStackTrace();
+			}
+		}
+	}
+	
+	public boolean isSoldOut() {
+		return soldOut;
+	}
+	
+	public void stockReduction(String selectMenu) {
+		FileReader fr = null;
+		BufferedReader br = null;
+		int changeRow=0,changeStock=0,changeNewStock=0;
+		String stringStock="";
+		try {
+			fr = new FileReader("./menu.txt");
+			br = new BufferedReader(fr);
+			int row = Integer.parseInt(br.readLine());
+			int col = Integer.parseInt(br.readLine());
+			String[] str = new String[col];
+			model.setRowCount(0);
+			for(int i=0; i<row; i++) {
+				for(int j=0; j<col; j++) {
+					String data = br.readLine();
+					str[j] = data;
+				}
+				model.addRow(str);
+			}
+			
+			for(int i=0; i<row; i++) {
+				if(selectMenu.equals((String)model.getValueAt(i, 0))) {
+					changeRow = i;
+				}
+			}
+			changeStock = Integer.parseInt((String)model.getValueAt(changeRow, 2));
+			if(changeStock <= 0) {
+				soldOut = true;
+			}
+			else {
+				changeNewStock = changeStock - 1;
+				stringStock = String.valueOf(changeNewStock);
+				model.setValueAt(stringStock, changeRow, 2);
+				this.saveMenu();
+			}
+		} catch(IOException e) {
+			e.printStackTrace();
+		} catch(NumberFormatException e) {
+			e.printStackTrace();
+		} finally {
+			try {
+				br.close();
+			} catch (IOException e) {
+				e.printStackTrace();
 			}
 		}
 	}

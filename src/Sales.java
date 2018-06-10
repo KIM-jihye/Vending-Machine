@@ -23,7 +23,7 @@ public class Sales extends JFrame {
 	Sales(String title) {
 		super(title);
 		if(title == "매출 관리") {
-			cp = this.getContentPane();
+//			cp = this.getContentPane();
 			this.setBounds(100,100,400,400);
 			this.setDesign();
 			this.setVisible(true);
