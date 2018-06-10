@@ -88,7 +88,7 @@ class Machine extends JFrame {    // 실행시키면 실행
 	String[] menuArr;
 	String[] priceArr;
 	String[] arr;
-//	String printMessage = "구매하실 품목을 선택하세요.";
+	String printMessage = "구매하실 품목을 선택하세요.";
 	
 	public Machine() {
 		setTitle("Vending Machine");
@@ -101,9 +101,15 @@ class Machine extends JFrame {    // 실행시키면 실행
 	
 	public void createMachineWindow() {    // 자판기 창 생성
 		JPanel menuPanel = new JPanel();
-		c.add(menuPanel);
+		menuPanel.setLayout(null);
+		JPanel moneyInputPanel = new JPanel();
+		moneyInputPanel.setLayout(new FlowLayout(20));
 		JPanel moneyPanel = new JPanel();
-		c.add(BorderLayout.AFTER_LAST_LINE,moneyPanel);
+		moneyPanel.setLayout(new BorderLayout(20,10));
+		c.add(BorderLayout.EAST, new JLabel());
+		c.add(BorderLayout.WEST, new JLabel());
+		c.add(BorderLayout.CENTER, menuPanel);
+		c.add(BorderLayout.SOUTH, moneyPanel);
 		
 		// 메뉴바 생성
 		JMenuBar menuBar = new JMenuBar();
@@ -121,12 +127,10 @@ class Machine extends JFrame {    // 실행시키면 실행
 		setJMenuBar(menuBar);
 		
 		// 자판기 메뉴 창 생성
-		menuPanel.setLayout(null);
 		this.printMenu(menuPanel);
 		
 		// USER 사용 창 생성		
-//		JLabel printLabel = new JLabel(printMessage);
-//		printLabel.setBounds(200, 390, 100, 30);
+		JLabel printLabel = new JLabel(printMessage);
 		
 		JLabel label500 = new JLabel("500원:");
 		JLabel label100 = new JLabel("100원:");
@@ -138,16 +142,20 @@ class Machine extends JFrame {    // 실행시키면 실행
 		input10Field = new JTextField(3);
 		btnInputMoney = new JButton("투입");
 
-		//moneyPanel.add(printLabel);
-	    moneyPanel.add(label500);
-	    moneyPanel.add(input500Field);
-	    moneyPanel.add(label100);
-	    moneyPanel.add(input100Field);
-	    moneyPanel.add(label50);
-	    moneyPanel.add(input50Field);
-	    moneyPanel.add(label10);
-	    moneyPanel.add(input10Field);
-	    moneyPanel.add(btnInputMoney);
+		moneyPanel.add(printLabel,"North");
+		
+	    moneyInputPanel.add(label500);
+	    moneyInputPanel.add(input500Field);
+	    moneyInputPanel.add(label100);
+	    moneyInputPanel.add(input100Field);
+	    moneyInputPanel.add(label50);
+	    moneyInputPanel.add(input50Field);
+	    moneyInputPanel.add(label10);
+	    moneyInputPanel.add(input10Field);
+	    moneyInputPanel.add(btnInputMoney);
+	    
+	    moneyPanel.add(moneyInputPanel,"Center");
+	    
 	    MenuActionListener menuAction = new MenuActionListener();
 	    btnInputMoney.addActionListener(menuAction);
 		}
@@ -195,6 +203,7 @@ class Machine extends JFrame {    // 실행시키면 실행
 				MenuActionListener listener = new MenuActionListener();
 				menuButton[i].setFont(new Font("돋움체", Font.PLAIN, 12));
 				priceLabel[i].setFont(new Font("돋움체", Font.PLAIN, 12));
+
 				if(i<3) {
 					menuButton[i].setBounds(130*i+30, 30, 100, 30);
 					priceLabel[i].setBounds(130*i+30, 60, 100, 30);
@@ -215,6 +224,7 @@ class Machine extends JFrame {    // 실행시키면 실행
 					priceLabel[i].setBounds(130*(i-9)+30, 360, 100, 30);
 					menuButton[i].addActionListener(listener);
 				}
+				
 				panel.add(menuButton[i]);
 				panel.add(priceLabel[i]);
 			}
