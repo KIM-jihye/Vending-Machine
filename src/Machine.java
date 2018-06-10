@@ -84,6 +84,7 @@ class Machine extends JFrame {    // 실행시키면 실행
 	JTextField inputMoneyField;
 	JButton btnInputMoney;
 	JButton[] menuButton = new JButton[12];
+	JLabel[] priceLabel = new JLabel[12];
 	String[] menuArr;
 	String[] priceArr;
 	String[] arr;
@@ -173,25 +174,32 @@ class Machine extends JFrame {    // 실행시키면 실행
 				menuArr[i] = arr[0];
 				priceArr[i] = arr[1];
 				menuButton[i] = new JButton(menuArr[i]);
+				priceLabel[i] = new JLabel(priceArr[i] + "원");
 				MenuActionListener listener = new MenuActionListener();
 				menuButton[i].setFont(new Font("돋움체", Font.PLAIN, 12));
+				priceLabel[i].setFont(new Font("돋움체", Font.PLAIN, 12));
 				if(i<3) {
 					menuButton[i].setBounds(130*i+30, 30, 100, 30);
+					priceLabel[i].setBounds(130*i+30, 60, 100, 30);
 					menuButton[i].addActionListener(listener);
 				}
 				else if(i<6) {
 					menuButton[i].setBounds(130*(i-3)+30, 130, 100, 30);
+					priceLabel[i].setBounds(130*(i-3)+30, 160, 100, 30);
 					menuButton[i].addActionListener(listener);
 				}
 				else if(i<9) {
 					menuButton[i].setBounds(130*(i-6)+30, 230, 100, 30);
+					priceLabel[i].setBounds(130*(i-6)+30, 260, 100, 30);
 					menuButton[i].addActionListener(listener);
 				}
 				else {
 					menuButton[i].setBounds(130*(i-9)+30, 330, 100, 30);
+					priceLabel[i].setBounds(130*(i-9)+30, 360, 100, 30);
 					menuButton[i].addActionListener(listener);
 				}
 				panel.add(menuButton[i]);
+				panel.add(priceLabel[i]);
 			}
 			
 		} catch(FileNotFoundException e1) {
