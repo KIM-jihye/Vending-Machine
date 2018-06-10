@@ -81,13 +81,14 @@ class Login extends JFrame implements ActionListener {
 @SuppressWarnings("serial")
 class Machine extends JFrame {    // 실행시키면 실행
 	Container c;
-	JTextField inputMoneyField;
+	JTextField input500Field,input100Field,input50Field,input10Field;
 	JButton btnInputMoney;
 	JButton[] menuButton = new JButton[12];
 	JLabel[] priceLabel = new JLabel[12];
 	String[] menuArr;
 	String[] priceArr;
 	String[] arr;
+//	String printMessage = "구매하실 품목을 선택하세요.";
 	
 	public Machine() {
 		setTitle("Vending Machine");
@@ -124,12 +125,28 @@ class Machine extends JFrame {    // 실행시키면 실행
 		this.printMenu(menuPanel);
 		
 		// USER 사용 창 생성		
-		JLabel label = new JLabel("투입 금액");
-		inputMoneyField = new JTextField(7);
-		btnInputMoney = new JButton("돈 넣기");
+//		JLabel printLabel = new JLabel(printMessage);
+//		printLabel.setBounds(200, 390, 100, 30);
+		
+		JLabel label500 = new JLabel("500원:");
+		JLabel label100 = new JLabel("100원:");
+		JLabel label50 = new JLabel("50원:");
+		JLabel label10 = new JLabel("10원:");
+		input500Field = new JTextField(3);
+		input100Field = new JTextField(3);
+		input50Field = new JTextField(3);
+		input10Field = new JTextField(3);
+		btnInputMoney = new JButton("투입");
 
-	    moneyPanel.add(label);
-	    moneyPanel.add(inputMoneyField);
+		//moneyPanel.add(printLabel);
+	    moneyPanel.add(label500);
+	    moneyPanel.add(input500Field);
+	    moneyPanel.add(label100);
+	    moneyPanel.add(input100Field);
+	    moneyPanel.add(label50);
+	    moneyPanel.add(input50Field);
+	    moneyPanel.add(label10);
+	    moneyPanel.add(input10Field);
 	    moneyPanel.add(btnInputMoney);
 	    MenuActionListener menuAction = new MenuActionListener();
 	    btnInputMoney.addActionListener(menuAction);
@@ -217,12 +234,14 @@ class Machine extends JFrame {    // 실행시키면 실행
 			
 			for(int i=0; i<12; i++) {
 				if(ob == menuButton[i]) {
-					Sales sales = new Sales("매출 추가");
-					sales.addSales(menuArr[i], priceArr[i]);
-					sales.saveSales();
+//					Sales sales = new Sales("매출 추가");
+//					sales.addSales(menuArr[i], priceArr[i]);
+//					sales.saveSales();
+//					printMessage = menuArr[i] + "를 선택하셨습니다. " + priceArr[i] + "원이 필요합니다.";
+					
 				}
 			}
-			if(ob == "투입") {
+			if(ob == btnInputMoney) {
 				Money money = new Money();
 				
 			}
