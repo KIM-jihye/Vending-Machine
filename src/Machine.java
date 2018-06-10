@@ -91,7 +91,9 @@ class Machine extends JFrame {    // 실행시키면 실행
 	String printMessage1 = "구매하실 품목을 선택하세요.";;
 	String printMessage2;
 	String selectMenu,selectPrice;
+	int price=0;
 	boolean isBuy=false;
+	boolean isSuccess=true;
 	
 	public Machine() {
 		setTitle("Vending Machine");
@@ -267,6 +269,31 @@ class Machine extends JFrame {    // 실행시키면 실행
 		JOptionPane.showMessageDialog(this, "이 품목은 매진되었습니다.", "매진", JOptionPane.WARNING_MESSAGE);
 	}
 	
+	void changeMessagePrint() {
+		Money money = new Money("잔돈 계산");
+		int[] inputChangeArr = new int[4];
+		int[] ouputChangeArr = new int[5];
+		try {
+			inputChangeArr[0] = Integer.parseInt(input500Field.getText());
+			inputChangeArr[1] = Integer.parseInt(input100Field.getText());
+			inputChangeArr[2] = Integer.parseInt(input50Field.getText());
+			inputChangeArr[3] = Integer.parseInt(input10Field.getText());
+			
+			ouputChangeArr = money.changeMoney(inputChangeArr,price);
+			if(ouputChangeArr[4] < 0) {
+				JOptionPane.showMessageDialog(this,"금액이 부족합니다.");
+			}
+			else {
+				printMessage1 = "거스름돈 : 500원 " + Integer.toString(ouputChangeArr[0]) +"개, "+ "100원 " + Integer.toString(ouputChangeArr[1])+"개, "
+		                                 + "50원 " + Integer.toString(ouputChangeArr[2]) +"개, " + "10원 " + Integer.toString(ouputChangeArr[3])+"개";
+				JOptionPane.showMessageDialog(this, printMessage1, "거스름돈", JOptionPane.WARNING_MESSAGE); 
+			}
+		} catch(NumberFormatException e) {
+			JOptionPane.showMessageDialog(this, "잘못 입력하셨습니다.", "경고", JOptionPane.WARNING_MESSAGE);
+			isSuccess = false;
+		}
+	}
+	
 	class MenuActionListener implements ActionListener {
 		public void actionPerformed(ActionEvent e5) {
 			Object ob = e5.getSource();
@@ -276,6 +303,7 @@ class Machine extends JFrame {    // 실행시키면 실행
 				if(ob == menuButton[i]) {
 					selectMenu = menuArr[i];
 					selectPrice = priceArr[i];
+					price = Integer.parseInt(priceArr[i]);
 					buyMessage1Print(selectMenu, selectPrice);
 				}
 			}
@@ -293,11 +321,14 @@ class Machine extends JFrame {    // 실행시키면 실행
 							selectMenu = null;
 						}
 						else {
-							Sales sales = new Sales("매출 추가");
-							sales.addSales(selectMenu, selectPrice);
-							sales.saveSales();
-							buyMessage2Print(selectMenu);
-							selectMenu = null;
+							changeMessagePrint();
+							if(isSuccess) {
+								Sales sales = new Sales("매출 추가");
+								sales.addSales(selectMenu, selectPrice);
+								sales.saveSales();
+								buyMessage2Print(selectMenu);
+								selectMenu = null;
+							}
 						}
 					}
 					else {

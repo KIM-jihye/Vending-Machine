@@ -13,12 +13,10 @@ public class Money extends JFrame implements ActionListener {
 	DefaultTableModel model;
 	JTable table;
 	JScrollPane jsp;
-	int[] ouputMoney;
+	int[] ouputMoney={0,0,0,0,0};
 	int SelectRow = -1;
-	int c500;
-	int c100;
-	int c50;
-	int c10;
+	int c500,c100,c50,c10;
+	int change=0;
     
 	Money(String title) {
 		super(title);
@@ -179,12 +177,30 @@ public class Money extends JFrame implements ActionListener {
 		}
 	}
 	
-	public int[] changeMoney(int[] inputMoney) {
+	public int[] changeMoney(int[] inputMoney,int price) {
+		Machine machine = new Machine();
+		int tf500= inputMoney[0] * 500;
+		int tf100= inputMoney[1] * 100;
+		int tf50= inputMoney[2] * 50;
+		int tf10= inputMoney[3] * 10;
+		int sum = tf500 + tf100 + tf50 + tf10;
+		change = sum - price;
+	      
+		ouputMoney[0] = change / 500;
+		ouputMoney[1] = (change % 500) / 100;
+		ouputMoney[2] = (change % 500 % 100) / 50;
+		ouputMoney[3] = (change % 500 % 100 % 50) /10;
+		ouputMoney[4] = change;
 		
 		return ouputMoney;
 	}
 	
 	public boolean successChange() {
-		return true;
+		if(change < 0) {
+			return false;
+		}
+		else {
+			return true;
+		}
 	}
 }
