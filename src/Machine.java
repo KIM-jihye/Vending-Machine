@@ -1,9 +1,7 @@
 import javax.swing.*;
-import javax.swing.table.*;
 import java.awt.*;
 import java.awt.event.*;
 import java.io.*;
-import java.util.*;
 
 @SuppressWarnings("serial")
 class Login extends JFrame implements ActionListener {
@@ -12,7 +10,7 @@ class Login extends JFrame implements ActionListener {
 	private JButton login;
 	JLabel loginText = new JLabel();
 	private boolean isLogin = false;    // 로그인이 성공했는지 판별(초기값은 실패)
-	int num=0;
+	int num=0;    // num값에 따라 메뉴관리,잔액관리,매출관리로 나뉨
 	
 	public Login(int managerNum) {
 		num = managerNum;
@@ -85,15 +83,12 @@ class Machine extends JFrame {    // 실행시키면 실행
 	JButton btnInputMoney;
 	JButton[] menuButton = new JButton[12];
 	JLabel[] priceLabel = new JLabel[12];
-	String[] menuArr;
-	String[] priceArr;
-	String[] arr;
-	String printMessage1 = "구매하실 품목을 선택하세요.";;
-	String printMessage2;
-	String selectMenu,selectPrice;
-	int price=0;
-	boolean isBuy=false;
-	boolean isSuccess=true;
+	String[] menuArr,priceArr,arr;    // menuArr:메뉴명 배열, priceArr:가격 배열, arr:menuArr과 priceArr을 만들기 위한 초기배열
+	String printMessage1 = "구매하실 품목을 선택하세요.";    // 안내 메시지
+	String selectMenu,selectPrice;    // selectMenu:사용자 선택 메뉴, selectPrice:사용자 선택 메뉴의 가격
+	int price=0;    // 사용자 선택 메뉴의 가격
+	boolean isBuy=false;    // 선택 메뉴보다 금액을 많이 넣었는지 판단
+	boolean isSuccess=true;    // 금액을 잘못 넣었는지 판단
 	
 	public Machine() {
 		setTitle("Vending Machine");
@@ -189,12 +184,13 @@ class Machine extends JFrame {    // 실행시키면 실행
 		BufferedReader br = null;
 		menuArr = new String[12];
 		priceArr = new String[12];
+		int row,col;
 		
 		try {
 			fr = new FileReader("./menu.txt");
 			br = new BufferedReader(fr);
-			int row = Integer.parseInt(br.readLine());
-			int col = Integer.parseInt(br.readLine());
+			row = Integer.parseInt(br.readLine());
+			col = Integer.parseInt(br.readLine());
 			arr = new String[col];
 			for(int i=0; i<row; i++) {
 				if(i>11) break;
@@ -235,13 +231,14 @@ class Machine extends JFrame {    // 실행시키면 실행
 		} catch(FileNotFoundException e1) {
 			e1.printStackTrace();
 		} catch(NumberFormatException e1) {
-			e1.printStackTrace();
+			row = 0;
+			col = 0;
 		} catch(IOException e1) {
 			e1.printStackTrace();
 		}
 	}
 	
-	void buyMessage1Print(String selectMenu, String selectPrice) {
+	public void buyMessage1Print(String selectMenu, String selectPrice) {
 		printMessage1 = selectMenu + "를 선택하셨습니다. ";
 		int ans = JOptionPane.showConfirmDialog(this, printMessage1, "구매확인", JOptionPane.YES_NO_OPTION);
 		if(ans == JOptionPane.YES_OPTION) {
@@ -253,23 +250,23 @@ class Machine extends JFrame {    // 실행시키면 실행
 		}
 	}
 	
-	void buyMessage2Print(String selectMenu) {
+	public void buyMessage2Print(String selectMenu) {
 		JOptionPane.showMessageDialog(this, selectMenu + " 의 구매가 완료되었습니다.");
 	}
 	
-	void errorMessage1() {
+	public void errorMessage1() {
 		JOptionPane.showMessageDialog(this, "메뉴를 선택하세요.", "오류", JOptionPane.WARNING_MESSAGE);
 	}
 	
-	void errorMessage2() {
+	public void errorMessage2() {
 		JOptionPane.showMessageDialog(this, "금액이 부족합니다.", "오류", JOptionPane.WARNING_MESSAGE);
 	}
 	
-	void soldOutMessage() {
+	public void soldOutMessage() {
 		JOptionPane.showMessageDialog(this, "이 품목은 매진되었습니다.", "매진", JOptionPane.WARNING_MESSAGE);
 	}
 	
-	void changeMessagePrint() {
+	public void changeMessagePrint() {
 		Money money = new Money("잔돈 계산");
 		int[] inputChangeArr = new int[4];
 		int[] ouputChangeArr = new int[5];
@@ -279,15 +276,28 @@ class Machine extends JFrame {    // 실행시키면 실행
 			inputChangeArr[2] = Integer.parseInt(input50Field.getText());
 			inputChangeArr[3] = Integer.parseInt(input10Field.getText());
 			
-			ouputChangeArr = money.changeMoney(inputChangeArr,price);
-			if(ouputChangeArr[4] < 0) {
-				JOptionPane.showMessageDialog(this,"금액이 부족합니다.");
+			if(inputChangeArr[0]<0 || inputChangeArr[1]<0 || inputChangeArr[2]<0 || inputChangeArr[3]<0) {
+				JOptionPane.showMessageDialog(this, "잘못 입력하셨습니다.", "경고", JOptionPane.WARNING_MESSAGE);
+				isSuccess = false;
 			}
 			else {
-				printMessage1 = "거스름돈 : 500원 " + Integer.toString(ouputChangeArr[0]) +"개, "+ "100원 " + Integer.toString(ouputChangeArr[1])+"개, "
-		                                 + "50원 " + Integer.toString(ouputChangeArr[2]) +"개, " + "10원 " + Integer.toString(ouputChangeArr[3])+"개";
-				JOptionPane.showMessageDialog(this, printMessage1, "거스름돈", JOptionPane.WARNING_MESSAGE); 
+				ouputChangeArr = money.changeMoney(inputChangeArr,price);
+				if(ouputChangeArr[4] < 0) {
+					this.errorMessage2();
+					isSuccess = false;
+				}
+				else {
+					printMessage1 = "거스름돈 : 500원 " + Integer.toString(ouputChangeArr[0]) +"개, "+ "100원 " + Integer.toString(ouputChangeArr[1])+"개, "
+			                                 + "50원 " + Integer.toString(ouputChangeArr[2]) +"개, " + "10원 " + Integer.toString(ouputChangeArr[3])+"개";
+					JOptionPane.showMessageDialog(this, printMessage1, "거스름돈", JOptionPane.WARNING_MESSAGE); 
+				}
 			}
+			// 입력 창 비움
+			input500Field.setText("");
+			input100Field.setText("");
+			input50Field.setText("");
+			input10Field.setText("");
+			input500Field.requestFocus();
 		} catch(NumberFormatException e) {
 			JOptionPane.showMessageDialog(this, "잘못 입력하셨습니다.", "경고", JOptionPane.WARNING_MESSAGE);
 			isSuccess = false;

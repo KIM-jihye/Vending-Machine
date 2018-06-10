@@ -3,7 +3,6 @@ import java.awt.event.*;
 import java.awt.*;
 import javax.swing.table.*;
 import java.io.*;
-//import java.util.*;
 
 @SuppressWarnings("serial")
 public class Money extends JFrame implements ActionListener {
@@ -78,12 +77,12 @@ public class Money extends JFrame implements ActionListener {
 	public void openMoney() {
 		FileReader fr = null;
 		BufferedReader br = null;
-
+		int row,col;
 		try {
 			fr = new FileReader("./money.txt");
 			br = new BufferedReader(fr);
-			int row = Integer.parseInt(br.readLine());
-			int col = Integer.parseInt(br.readLine());
+			row = Integer.parseInt(br.readLine());
+			col = Integer.parseInt(br.readLine());
 			String[] str = new String[col];
 			model.setRowCount(0);
 			for(int i=0; i<row; i++) {
@@ -97,7 +96,8 @@ public class Money extends JFrame implements ActionListener {
 		} catch(FileNotFoundException e1) {
 			e1.printStackTrace();
 		} catch(NumberFormatException e1) {
-			e1.printStackTrace();
+			row=1;
+			col=4;
 		} catch(IOException e1) {
 			e1.printStackTrace();
 		}
@@ -178,7 +178,6 @@ public class Money extends JFrame implements ActionListener {
 	}
 	
 	public int[] changeMoney(int[] inputMoney,int price) {
-		Machine machine = new Machine();
 		int tf500= inputMoney[0] * 500;
 		int tf100= inputMoney[1] * 100;
 		int tf50= inputMoney[2] * 50;

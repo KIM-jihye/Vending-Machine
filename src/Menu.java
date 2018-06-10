@@ -15,11 +15,9 @@ public class Menu extends JFrame implements ActionListener {
 	JTable table;
 	JScrollPane jsp;
 	int SelectRow = -1;
-//	String userSelectMenu=null;
 	boolean soldOut = false; 
 	
 	Menu(String menuTitle) {
-		
 		super(menuTitle);
 		if(menuTitle == "메뉴 관리") {
 			cp = this.getContentPane();
@@ -47,8 +45,6 @@ public class Menu extends JFrame implements ActionListener {
 		pTop.add(new JLabel("재고:"));
 		pTop.add(stockField);
 		// 중간
-//		String[] title = {"상품명","가격","재고"};
-//		model = new DefaultTableModel(title, 0);
 		table = new JTable(model);
 		table.addMouseListener(new TableEvent());
 		jsp = new JScrollPane(table);
@@ -73,6 +69,7 @@ public class Menu extends JFrame implements ActionListener {
 	public void openMenu() {
 		FileReader fr = null;
 		BufferedReader br = null;
+		int row,col;
 		try {
 			File menuFile = new File("./menu.txt");
 			if(!menuFile.exists()) {
@@ -80,8 +77,8 @@ public class Menu extends JFrame implements ActionListener {
 			}
 			fr = new FileReader("./menu.txt");
 			br = new BufferedReader(fr);
-			int row = Integer.parseInt(br.readLine());
-			int col = Integer.parseInt(br.readLine());
+			row = Integer.parseInt(br.readLine());
+			col = Integer.parseInt(br.readLine());
 			String[] str = new String[col];
 			model.setRowCount(0);
 			for(int i=0; i<row; i++) {
@@ -95,7 +92,8 @@ public class Menu extends JFrame implements ActionListener {
 		} catch(FileNotFoundException e1) {
 			e1.printStackTrace();
 		} catch(NumberFormatException e1) {
-			e1.printStackTrace();
+			row = 0;
+			col = 0;
 		} catch(IOException e1) {
 			e1.printStackTrace();
 		}

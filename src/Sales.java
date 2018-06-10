@@ -1,10 +1,8 @@
 import javax.swing.*;
 import javax.swing.table.*;
 import java.awt.*;
-import java.awt.event.*;
 import java.io.*;
 import java.util.*;
-import java.util.Vector;
 
 @SuppressWarnings("serial")
 public class Sales extends JFrame {
@@ -16,14 +14,9 @@ public class Sales extends JFrame {
 	int SelectRow = -1;
 	int salesSum = 0;
 	
-	Sales() {
-		return;
-	}
-	
 	Sales(String title) {
 		super(title);
 		if(title == "매출 관리") {
-//			cp = this.getContentPane();
 			this.setBounds(100,100,400,400);
 			this.setDesign();
 			this.setVisible(true);
@@ -142,8 +135,6 @@ public class Sales extends JFrame {
 		FileWriter fw = null;
 		try {
 			fw = new FileWriter("./sales.txt",true);
-			//fw.write(String.valueOf(model.getRowCount()) + "\n");
-			//fw.write(String.valueOf(model.getColumnCount()) + "\n");
 			for(int i=0; i<model.getRowCount(); i++) {
 				for(int j=0; j<model.getColumnCount(); j++) {
 					String data = (String)model.getValueAt(i, j);
