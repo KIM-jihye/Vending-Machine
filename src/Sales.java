@@ -16,10 +16,6 @@ public class Sales extends JFrame {
 	int SelectRow = -1;
 	int salesSum = 0;
 	
-	Sales() {
-		return;
-	}
-	
 	Sales(String title) {
 		super(title);
 		if(title == "매출 관리") {
@@ -28,7 +24,7 @@ public class Sales extends JFrame {
 			this.setDesign();
 			this.setVisible(true);
 		}
-		if(title == "매출 추가") {
+		else {
 		}
 	}
 	
