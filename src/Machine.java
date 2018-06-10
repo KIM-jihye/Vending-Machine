@@ -88,7 +88,8 @@ class Machine extends JFrame {    // 실행시키면 실행
 	String[] menuArr;
 	String[] priceArr;
 	String[] arr;
-	String printMessage = "구매하실 품목을 선택하세요.";
+	String printMessage1 = "구매하실 품목을 선택하세요.";;
+	String printMessage2;
 	
 	public Machine() {
 		setTitle("Vending Machine");
@@ -130,7 +131,8 @@ class Machine extends JFrame {    // 실행시키면 실행
 		this.printMenu(menuPanel);
 		
 		// USER 사용 창 생성		
-		JLabel printLabel = new JLabel(printMessage);
+		
+		JLabel printLabel = new JLabel(printMessage1);
 		
 		JLabel label500 = new JLabel("500원:");
 		JLabel label100 = new JLabel("100원:");
@@ -207,24 +209,21 @@ class Machine extends JFrame {    // 실행시키면 실행
 				if(i<3) {
 					menuButton[i].setBounds(130*i+30, 30, 100, 30);
 					priceLabel[i].setBounds(130*i+30, 60, 100, 30);
-					menuButton[i].addActionListener(listener);
 				}
 				else if(i<6) {
 					menuButton[i].setBounds(130*(i-3)+30, 130, 100, 30);
 					priceLabel[i].setBounds(130*(i-3)+30, 160, 100, 30);
-					menuButton[i].addActionListener(listener);
 				}
 				else if(i<9) {
 					menuButton[i].setBounds(130*(i-6)+30, 230, 100, 30);
 					priceLabel[i].setBounds(130*(i-6)+30, 260, 100, 30);
-					menuButton[i].addActionListener(listener);
 				}
 				else {
 					menuButton[i].setBounds(130*(i-9)+30, 330, 100, 30);
 					priceLabel[i].setBounds(130*(i-9)+30, 360, 100, 30);
-					menuButton[i].addActionListener(listener);
 				}
 				
+				menuButton[i].addActionListener(listener);
 				panel.add(menuButton[i]);
 				panel.add(priceLabel[i]);
 			}
@@ -238,6 +237,14 @@ class Machine extends JFrame {    // 실행시키면 실행
 		}
 	}
 	
+	void buyMessagePrint(String selectMenu, String selectPrice) {
+		printMessage1 = selectMenu + "를 선택하셨습니다. " + selectPrice + "원이 필요합니다.";
+		int ans = JOptionPane.showConfirmDialog(this, printMessage1, "구매확인", JOptionPane.YES_NO_OPTION);
+		if(ans == JOptionPane.YES_OPTION) {
+			JOptionPane.showMessageDialog(this, selectPrice + "원이 필요합니다.");
+		}
+	}
+	
 	class MenuActionListener implements ActionListener {
 		public void actionPerformed(ActionEvent e5) {
 			Object ob = e5.getSource();
@@ -247,8 +254,7 @@ class Machine extends JFrame {    // 실행시키면 실행
 //					Sales sales = new Sales("매출 추가");
 //					sales.addSales(menuArr[i], priceArr[i]);
 //					sales.saveSales();
-//					printMessage = menuArr[i] + "를 선택하셨습니다. " + priceArr[i] + "원이 필요합니다.";
-					
+					buyMessagePrint(menuArr[i], priceArr[i]);
 				}
 			}
 			if(ob == btnInputMoney) {
