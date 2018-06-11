@@ -3,6 +3,7 @@ import java.awt.*;
 import java.awt.event.*;
 import java.io.*;
 
+/*
 @SuppressWarnings("serial")
 class Login extends JFrame implements ActionListener {
 	private String password = "123";    // 비밀번호를 123으로 설정 
@@ -75,6 +76,7 @@ class Login extends JFrame implements ActionListener {
 		}
 	}
 }
+*/
 
 @SuppressWarnings("serial")
 class Machine extends JFrame {    // 실행시키면 실행
@@ -89,6 +91,13 @@ class Machine extends JFrame {    // 실행시키면 실행
 	int price=0;    // 사용자 선택 메뉴의 가격
 	boolean isBuy=false;    // 선택 메뉴보다 금액을 많이 넣었는지 판단
 	boolean isSuccess=true;    // 금액을 잘못 넣었는지 판단
+	
+	String password = "123";    // 비밀번호를 123으로 설정 
+	JPasswordField passwordField;
+	JButton login;
+	JLabel loginText = new JLabel();
+	boolean isLogin = false;    // 로그인이 성공했는지 판별(초기값은 실패)
+	int num=0;    // num값에 따라 메뉴관리,잔액관리,매출관리로 나뉨
 	
 	public Machine() {
 		setTitle("Vending Machine");
@@ -169,16 +178,81 @@ class Machine extends JFrame {    // 실행시키면 실행
 			
 			switch(cmd) {
 			case "메뉴 관리":
-				new Login(1);
+				login(1);
 				break;
 			case "매출 관리":
-				new Login(2);
+				login(2);
 				break;
 			case "잔돈 관리":
-				new Login(3);
+				login(3);
 				break;
 			}
 		}
+	}
+	
+	public void login(int managerNum) {
+		num = managerNum;
+		JPanel passPanel = new JPanel();
+		passwordField = new JPasswordField(10);
+		loginText.setForeground(Color.RED);
+		
+		LoginActionListener loginAction = new LoginActionListener();
+		
+		JLabel passLabel = new JLabel("PASSWORD");
+		passLabel.setBounds(10, 10, 80, 25);
+		login = new JButton("LOGIN");
+		login.addActionListener(loginAction);
+			
+		passPanel.add(passLabel);
+		passPanel.add(passwordField);
+			
+		this.add(passPanel);
+		this.add(login);
+		this.add(loginText);
+			
+		setLayout(new FlowLayout());
+		
+		setTitle("LOGIN");
+		setSize(300, 200);
+		
+		setVisible(true);
+	}
+	
+	class LoginActionListener implements ActionListener {
+		public void actionPerformed(ActionEvent e1) {
+			if(e1.getSource() == login) {
+				try {
+					if(password.equals(passwordField.getText()))
+						isLogin = true;
+					else
+						isLogin = false;
+					if(isLogin) {
+						loginText.setText("로그인되었습니다. 안녕하세요.");
+						switch(num) {
+						case 1:
+							new Menu("메뉴 관리");
+							break;
+						case 2:
+							new Sales("매출 관리");
+							break;
+						case 3:
+							new Money("잔돈 관리");
+							break;
+						}
+					}
+					else {
+						loginText.setText("PASSWORD가 잘못되었습니다.");
+					}
+					passwordField.setText("");
+				} catch (Exception e2) {
+					System.out.println("false");
+				}
+			}
+		}
+	}
+	
+	public boolean getLogin() {
+		return isLogin;
 	}
 	
 	public void printMenu(JPanel panel) {
