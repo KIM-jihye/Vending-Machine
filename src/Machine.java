@@ -84,11 +84,14 @@ class Machine extends JFrame {    // 실행시키면 실행
 	JButton[] menuButton = new JButton[12];
 	JLabel[] priceLabel = new JLabel[12];
 	String[] menuArr,priceArr,arr;    // menuArr:메뉴명 배열, priceArr:가격 배열, arr:menuArr과 priceArr을 만들기 위한 초기배열
+	int[] inputChangeArr = new int[4];  // user가 입력한 동전 배열
+	int[] outputChangeArr = new int[5];  // user가 받을 거스름돈 배열 (마지막에는 거스름돈 총합계)
 	String printMessage1 = "구매하실 품목을 선택하세요.";    // 안내 메시지
 	String selectMenu,selectPrice;    // selectMenu:사용자 선택 메뉴, selectPrice:사용자 선택 메뉴의 가격
 	int price=0;    // 사용자 선택 메뉴의 가격
 	boolean isBuy=false;    // 선택 메뉴보다 금액을 많이 넣었는지 판단
 	boolean isSuccess=true;    // 금액을 잘못 넣었는지 판단
+	boolean isExistChange=false;	// 거스름돈 유무
 	
 	public Machine() {
 		setTitle("Vending Machine");
@@ -268,10 +271,20 @@ class Machine extends JFrame {    // 실행시키면 실행
 		JOptionPane.showMessageDialog(this, "이 품목은 매진되었습니다.", "매진", JOptionPane.WARNING_MESSAGE);
 	}
 	
+	public void noChangeMessage() {
+		JOptionPane.showMessageDialog(this, "거스름돈이 부족합니다. 구매할 수 없습니다.", "잔돈 부족", JOptionPane.WARNING_MESSAGE);
+	}
+	
+	public void setChangeArr(int[] outputChangeArr) {
+		this.outputChangeArr = outputChangeArr;
+	}
+	
+	public int[] getChangeArr() {
+		return outputChangeArr;
+	}
+	
 	public void changeMessagePrint() {
 		Money money = new Money("잔돈 계산");
-		int[] inputChangeArr = new int[4];
-		int[] ouputChangeArr = new int[5];
 		try {
 			inputChangeArr[0] = Integer.parseInt(input500Field.getText());
 			inputChangeArr[1] = Integer.parseInt(input100Field.getText());
@@ -283,14 +296,15 @@ class Machine extends JFrame {    // 실행시키면 실행
 				isSuccess = false;
 			}
 			else {
-				ouputChangeArr = money.changeMoney(inputChangeArr,price);
-				if(ouputChangeArr[4] < 0) {
+				outputChangeArr = money.changeMoney(inputChangeArr,price);
+				this.setChangeArr(outputChangeArr);
+				if(outputChangeArr[4] < 0) {
 					this.errorMessage2();
 					isSuccess = false;
 				}
 				else {
-					printMessage1 = "거스름돈 : 500원 " + Integer.toString(ouputChangeArr[0]) +"개, "+ "100원 " + Integer.toString(ouputChangeArr[1])+"개, "
-			                                 + "50원 " + Integer.toString(ouputChangeArr[2]) +"개, " + "10원 " + Integer.toString(ouputChangeArr[3])+"개";
+					printMessage1 = "거스름돈 : 500원 " + Integer.toString(outputChangeArr[0]) +"개, "+ "100원 " + Integer.toString(outputChangeArr[1])+"개, "
+			                                 + "50원 " + Integer.toString(outputChangeArr[2]) +"개, " + "10원 " + Integer.toString(outputChangeArr[3])+"개";
 					JOptionPane.showMessageDialog(this, printMessage1, "거스름돈", JOptionPane.WARNING_MESSAGE); 
 				}
 			}
@@ -335,11 +349,18 @@ class Machine extends JFrame {    // 실행시키면 실행
 						else {
 							changeMessagePrint();
 							if(isSuccess) {
-								Sales sales = new Sales("매출 추가");
-								sales.addSales(selectMenu, selectPrice);
-								sales.saveSales();
-								buyMessage2Print(selectMenu);
-								selectMenu = null;
+								isExistChange = money.resaveMoney(inputChangeArr, getChangeArr());
+								if(isExistChange) {
+									Sales sales = new Sales("매출 추가");
+									sales.addSales(selectMenu, selectPrice);
+									sales.saveSales();
+									buyMessage2Print(selectMenu);
+									selectMenu = null;
+								}
+								else {
+									noChangeMessage();
+									selectMenu = null;
+								}
 							}
 						}
 					}

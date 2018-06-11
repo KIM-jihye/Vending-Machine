@@ -9,10 +9,11 @@ public class Money extends JFrame implements ActionListener {
 	Container cp;
 	JTextField change500,change100,change50, change10;
 	JButton btnMod,btnSave;
-	DefaultTableModel model;
+	String[] title = {"500원","100원","50원","10원"};
+	DefaultTableModel model = new DefaultTableModel(title,0);
 	JTable table;
 	JScrollPane jsp;
-	int[] ouputMoney={0,0,0,0,0};
+	int[] outputMoney={0,0,0,0,0};
 	int SelectRow = -1;
 	int c500,c100,c50,c10;
 	int change=0;
@@ -51,10 +52,10 @@ public class Money extends JFrame implements ActionListener {
 		pTop.add(change10);
       
 		//테이블
-		String[] title = {"500원","100원","50원","10원"};
+//		String[] title = {"500원","100원","50원","10원"};
 		String[] num = {"0","0","0","0"};
       
-		model = new DefaultTableModel(title,0);
+//		model = new DefaultTableModel(title,0);
 		model.addRow(num);
 		table = new JTable(model);
 		table.addMouseListener(new TableEvent());
@@ -177,6 +178,52 @@ public class Money extends JFrame implements ActionListener {
 		}
 	}
 	
+	public boolean resaveMoney(int[] inputMoney, int[] output) {
+		try {
+			this.openMoney();
+			
+			c500 = Integer.parseInt((String)model.getValueAt(0, 0)) + inputMoney[0];
+			c500 = c500 - output[0];
+			System.out.println(" " + c500);
+			
+			c100 = Integer.parseInt((String)model.getValueAt(0, 1)) + inputMoney[1];
+			c100 = c100 - output[1];
+			
+			c50 = Integer.parseInt((String)model.getValueAt(0, 2)) + inputMoney[2];
+			c50 = c50 - output[2];
+			
+			c10 = Integer.parseInt((String)model.getValueAt(0, 3)) + inputMoney[3];
+			c10 = c10 - output[3];
+			
+			if(c500<0) {
+				JOptionPane.showMessageDialog(this, "500원 동전이 없습니다.", "오류", JOptionPane.WARNING_MESSAGE);
+				return false;
+			}
+			if(c100<0) {
+				JOptionPane.showMessageDialog(this, "100원 동전이 없습니다.", "오류", JOptionPane.WARNING_MESSAGE);
+				return false;
+			}
+			if(c50<0) {
+				JOptionPane.showMessageDialog(this, "50원 동전이 없습니다.", "오류", JOptionPane.WARNING_MESSAGE);
+				return false;
+			}
+			if(c10<0) {
+				JOptionPane.showMessageDialog(this, "10원 동전이 없습니다.", "오류", JOptionPane.WARNING_MESSAGE);
+				return false;
+			}
+			else {
+				model.setValueAt(c500,0,0);
+				model.setValueAt(c100,0,1);
+				model.setValueAt(c50,0,2);
+				model.setValueAt(c10,0,3);
+				this.saveMoney();
+			}
+		} catch(NumberFormatException e) {
+			e.printStackTrace();
+		}
+		return true;
+	}
+	
 	public int[] changeMoney(int[] inputMoney,int price) {
 		int tf500= inputMoney[0] * 500;
 		int tf100= inputMoney[1] * 100;
@@ -185,13 +232,13 @@ public class Money extends JFrame implements ActionListener {
 		int sum = tf500 + tf100 + tf50 + tf10;
 		change = sum - price;
 	      
-		ouputMoney[0] = change / 500;
-		ouputMoney[1] = (change % 500) / 100;
-		ouputMoney[2] = (change % 500 % 100) / 50;
-		ouputMoney[3] = (change % 500 % 100 % 50) /10;
-		ouputMoney[4] = change;
+		outputMoney[0] = change / 500;
+		outputMoney[1] = (change % 500) / 100;
+		outputMoney[2] = (change % 500 % 100) / 50;
+		outputMoney[3] = (change % 500 % 100 % 50) /10;
+		outputMoney[4] = change;
 		
-		return ouputMoney;
+		return outputMoney;
 	}
 	
 	public boolean successChange() {
