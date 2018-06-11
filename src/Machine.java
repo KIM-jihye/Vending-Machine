@@ -102,12 +102,13 @@ class Machine extends JFrame {    // 실행시키면 실행
 	public void createMachineWindow() {    // 자판기 창 생성
 		JPanel menuPanel = new JPanel();
 		menuPanel.setLayout(null);
+		menuPanel.setBackground(Color.LIGHT_GRAY);
 		JPanel moneyInputPanel = new JPanel();
 		moneyInputPanel.setLayout(new FlowLayout(20));
+		moneyInputPanel.setBackground(Color.WHITE);
 		JPanel moneyPanel = new JPanel();
+		moneyPanel.setBackground(Color.WHITE);
 		moneyPanel.setLayout(new BorderLayout(20,10));
-		c.add(BorderLayout.EAST, new JLabel());
-		c.add(BorderLayout.WEST, new JLabel());
 		c.add(BorderLayout.CENTER, menuPanel);
 		c.add(BorderLayout.SOUTH, moneyPanel);
 		
@@ -142,6 +143,7 @@ class Machine extends JFrame {    // 실행시키면 실행
 		input50Field = new JTextField(3);
 		input10Field = new JTextField(3);
 		btnInputMoney = new JButton("투입");
+		btnInputMoney.setBackground(Color.WHITE);
 
 		moneyPanel.add(printLabel,"North");
 		
@@ -222,7 +224,7 @@ class Machine extends JFrame {    // 실행시키면 실행
 					menuButton[i].setBounds(130*(i-9)+30, 330, 100, 30);
 					priceLabel[i].setBounds(130*(i-9)+30, 360, 100, 30);
 				}
-				
+				menuButton[i].setBackground(Color.WHITE);
 				menuButton[i].addActionListener(listener);
 				panel.add(menuButton[i]);
 				panel.add(priceLabel[i]);
