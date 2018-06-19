@@ -182,18 +182,10 @@ public class Money extends JFrame implements ActionListener {
 		try {
 			this.openMoney();
 			
-			c500 = Integer.parseInt((String)model.getValueAt(0, 0)) + inputMoney[0];
-			c500 = c500 - output[0];
-			System.out.println(" " + c500);
-			
-			c100 = Integer.parseInt((String)model.getValueAt(0, 1)) + inputMoney[1];
-			c100 = c100 - output[1];
-			
-			c50 = Integer.parseInt((String)model.getValueAt(0, 2)) + inputMoney[2];
-			c50 = c50 - output[2];
-			
-			c10 = Integer.parseInt((String)model.getValueAt(0, 3)) + inputMoney[3];
-			c10 = c10 - output[3];
+			c500 = Integer.parseInt((String)model.getValueAt(0, 0)) + inputMoney[0] - output[0];
+			c100 = Integer.parseInt((String)model.getValueAt(0, 1)) + inputMoney[1] - output[1];
+			c50 = Integer.parseInt((String)model.getValueAt(0, 2)) + inputMoney[2] - output[2];
+			c10 = Integer.parseInt((String)model.getValueAt(0, 3)) + inputMoney[3] - output[3];
 			
 			if(c500<0) {
 				JOptionPane.showMessageDialog(this, "500원 동전이 없습니다.", "오류", JOptionPane.WARNING_MESSAGE);
